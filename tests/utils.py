@@ -14,7 +14,7 @@ def get_rastercube_dir():
 
 
 def get_testdata_dir():
-    assert 'RASTERCUBE_TEST_DATA' in os.environ, 'You must define TERRAI_TEST_DATA'
+    assert 'RASTERCUBE_TEST_DATA' in os.environ, 'You must define RASTERCUBE_TEST_DATA'
     datadir = os.environ['RASTERCUBE_TEST_DATA']
     assert os.path.exists(datadir), 'testdata dir %s does not exist' % datadir
     return datadir
