@@ -17,3 +17,4 @@ dist/
 /flake8.txt
 /rastercube/datasources/modis_qa.c
 /rastercube/datasources/landsat8_qa.c
+/docker/rastercube.tar.bz2
