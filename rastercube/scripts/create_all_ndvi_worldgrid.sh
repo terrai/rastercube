@@ -11,7 +11,6 @@ TILES=(h10v08 h11v08 h12v08 h10v09 h11v09 h12v09
     h27v08 h28v08 h29v08 h30v08
     h28v09 h29v09 h30v09 h31v09 h32v09)
 
-#WORLDGRID=fs:///home/terrai/data/sv2455/jgrids/worldgrid
 WORLDGRID=hdfs:///user/terrai/worldgrid/
 
 # Using more workers doesn't necessarily improve perfs as this is mostly IO

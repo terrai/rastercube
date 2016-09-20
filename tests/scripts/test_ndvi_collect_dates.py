@@ -5,10 +5,9 @@ import unittest
 import subprocess
 import tempfile
 import tests.utils as test_utils
-import rastercube.data as terradata
 
 
-class NDVICollectDatesTest(test_utils.TerraiTest):
+class NDVICollectDatesTest(test_utils.RasterCubeTest):
     def test_collect_dates(self):
         script = os.path.join(test_utils.get_rastercube_dir(), 'scripts',
                               'ndvi_collect_dates.py')

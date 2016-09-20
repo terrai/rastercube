@@ -6,7 +6,6 @@ import tempfile
 import unittest
 import subprocess
 import shutil
-import rastercube.data as terradata
 import tests.utils as test_utils
 import rastercube.jgrid as jgrid
 import rastercube.jgrid.utils as jgrid_utils
@@ -39,7 +38,7 @@ def assert_grids_same(root1, root2):
         assert_array_equal(data1, data2)
 
 
-class CompleteNDVIWorldgridTest(test_utils.TerraiTest):
+class CompleteNDVIWorldgridTest(test_utils.RasterCubeTest):
     """
     Note that this is a quite long test
 
@@ -70,11 +69,11 @@ class CompleteNDVIWorldgridTest(test_utils.TerraiTest):
         complete_script = os.path.join(test_utils.get_rastercube_dir(),
                 'scripts', 'complete_ndvi_worldgrid.py')
 
-        dates_csv = os.path.join(terradata.data_path(), '1_manual',
+        dates_csv = os.path.join(utils.get_data_dir(), '1_manual',
                                  'ndvi_dates.csv')
-        dates_csv_2 = os.path.join(terradata.data_path(), '1_manual',
+        dates_csv_2 = os.path.join(utils.get_data_dir(), '1_manual',
                                    'ndvi_dates.2.csv')
-        dates_csv_3 = os.path.join(terradata.data_path(), '1_manual',
+        dates_csv_3 = os.path.join(utils.get_data_dir(), '1_manual',
                                    'ndvi_dates.3.csv')
 
         def create(name, frac_ndates, dates_csv):

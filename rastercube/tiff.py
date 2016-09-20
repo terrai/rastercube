@@ -2,50 +2,6 @@ from osgeo import gdal
 import numpy as np
 
 
-def compute_geo_transform_from_jgrid_meta(meta):
-    """
-    Computes a 6-tuple Geo Transform from a jGrid meta.
-    """
-    pix_xsize = meta['cellsize']
-    pix_ysize = -meta['cellsize']
-    offset_x = offset_y = 0
-    lng_tl = meta['top_left_lng']
-    lat_tl = meta['top_left_lat']
-    return (lng_tl, pix_xsize, offset_x, lat_tl, offset_y, pix_ysize)
-
-
-def compute_geo_transform_from_jgrid2_header(header):
-    """
-    Computes a 6-tuple Geo Transform from a jGrid2 Header.
-    """
-    lat_tl, lng_tl = header.tl_latlng
-    pix_xsize = header.cell_size
-    pix_ysize = -pix_xsize
-    offset_x = offset_y = 0
-    return (lng_tl, pix_xsize, offset_x, lat_tl, offset_y, pix_ysize)
-
-
-def write_terrai_zip_to_tiff(name, data, meta, projection, unit):
-    """
-    Writes a numpy array from a terrai zip to a tiff file given the
-    corresponding jGrid meta and the ouptut gdal projection and unit.
-    Keyword arguments:
-    name -- the name of the output file
-    data -- the numpy array that will be written
-    meta -- the jGrid meta for the numpy array
-    projection -- the gdal projection to use for the output file
-    """
-    gtiff_drv = gdal.GetDriverByName("GTiff")
-    tiff_file = gtiff_drv.Create(name, data.shape[1], data.shape[0], 1, unit)
-
-    tiff_file.SetGeoTransform(compute_geo_transform_from_jgrid_meta(meta))
-    tiff_file.SetProjection(projection)
-
-    tiff_file.GetRasterBand(1).WriteArray(data)
-    tiff_file.FlushCache()
-    tiff_file = None
-
-
 def reproject_tiff_from_model(old_name, new_name, model, unit):
     """
     Reprojects an tiff on a tiff model. Can be used to warp tiff.

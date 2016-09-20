@@ -5,7 +5,7 @@ A few notes on how this works :
 
 The MODIS website we use is :
 
-    http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/ (for Terrai)
+    http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/ (for Terra)
     http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/ (for Aqua)
 
 On the MODIS website, each date has a HTML files that list the available HDF
@@ -13,12 +13,10 @@ files. We build a cache of the HTML for each date so we don't have to fetch
 it every time (since this is *REALLY* slow)
 
 This cache is saved in --modis_cache_dir (usually
-$TERRAI_DATA/0_input/modis_www_cache)
+$RASTERCUBE_DATA/0_input/modis_www_cache)
 
 Then, we have to parse each date HTML file to get the list of available HDF
 files and download the HDF files that are not present on the filesystem.
-
-We use terrai's download_modis.properties to specify the tiles to download.
 """
 #import requests_cache
 #requests_cache.install_cache()
@@ -27,9 +25,9 @@ import os
 import argparse
 from datetime import datetime
 import calendar
-import terrapy.utils as utils
-import terrapy.config as config
-import terrapy.datasources.modis as modis
+import rastercube.utils as utils
+import rastercube.config as config
+import rastercube.datasources.modis as modis
 import urlparse
 import cPickle as pickle
 import tempfile
@@ -47,7 +45,7 @@ parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
 parser.add_argument('--hdfdir', type=str, required=False, default=None,
                     help='source directory containing '
                          'HDF files, organised in per-year subdirectories'
-                         '(e.g. $TERRAI_DATA/0_input/MOD13Q1.005/HDF/LAT/)')
+                         '(e.g. $RASTERCUBE_DATA/0_input/MOD13Q1.005/HDF/LAT/)')
 parser.add_argument('--skip_mirror', action='store_true',
                     help='Skip the mirroring, just do the download')
 parser.add_argument('--modis_mirror_dir', type=str, default=None,
@@ -260,7 +258,7 @@ def download_files_aria2(missing_files):
 
 
 # Use a cache
-MODIS_HDF_CACHE = '/tmp/terrai_modis_cache.pickle'
+MODIS_HDF_CACHE = '/tmp/modis_cache.pickle'
 
 
 if __name__ == '__main__':
@@ -276,7 +274,7 @@ if __name__ == '__main__':
 
     root_mirror_dir = args.modis_mirror_dir
     if root_mirror_dir is None:
-        root_mirror_dir = os.path.join(utils.get_terrai_data(), '0_input',
+        root_mirror_dir = os.path.join(utils.get_data_dir(), '0_input',
                                        'modis_www_mirror')
     print 'Using MODIS cache directory'
 

@@ -5,8 +5,8 @@ MODIS tile contains (at least) the requested dates
 Example invocation :
 
 python scripts/dev/create_ndvi_worldgrid.py --tile h10v09 \
-    --grid_root=hdfs://user/terrai/worldgrid/ndvi/
-    --dates_csv=$TERRAI_DATA/2_jgrids2/ndvi_dates.csv
+    --grid_root=hdfs://user/me/worldgrid/ndvi/
+    --dates_csv=$RASTERCUBE_DATA/2_jgrids2/ndvi_dates.csv
 """
 import os
 import sys
@@ -17,10 +17,10 @@ import ctypes
 import numpy as np
 import multiprocessing
 import multiprocessing.sharedctypes
-import terrapy.utils as utils
-import terrapy.datasources.modis as modis
-import terrapy.jgrid as jgrid
-import terrapy.worldgrid.grids as grids
+import rastercube.utils as utils
+import rastercube.datasources.modis as modis
+import rastercube.jgrid as jgrid
+import rastercube.worldgrid.grids as grids
 
 
 parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')

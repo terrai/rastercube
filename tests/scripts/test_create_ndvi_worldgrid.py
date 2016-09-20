@@ -6,7 +6,6 @@ import tempfile
 import unittest
 import subprocess
 import shutil
-import rastercube.data as terradata
 import tests.utils as test_utils
 import rastercube.jgrid as jgrid
 import rastercube.jgrid.utils as jgrid_utils
@@ -16,7 +15,7 @@ import rastercube.gdal_utils as gdal_utils
 from numpy.testing import assert_array_equal
 
 
-class CreateNDVIWorldgridTest(test_utils.TerraiTest):
+class CreateNDVIWorldgridTest(test_utils.RasterCubeTest):
     """
     This is really an integration test because it tests the following :
     - Creates of a NDVI worldgrid from HDF files
@@ -37,7 +36,7 @@ class CreateNDVIWorldgridTest(test_utils.TerraiTest):
                               'create_ndvi_worldgrid.py')
         ndvi_dir = os.path.join(self.tmpdir, 'ndvi')
         qa_dir = os.path.join(self.tmpdir, 'qa')
-        dates_csv = os.path.join(terradata.data_path(), '1_manual',
+        dates_csv = os.path.join(utils.get_data_dir(), '1_manual',
                                  'ndvi_dates.2.csv')
         tile = 'h29v07'
         print 'dates_csv : ', dates_csv
@@ -51,11 +50,7 @@ class CreateNDVIWorldgridTest(test_utils.TerraiTest):
             '--frac_ndates=1',
             '--dates_csv=%s' % dates_csv
         ]
-        try:
-            output = subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print 'Failed running'
-            print ' '.join(cmd)
+        output = subprocess.check_output(cmd)
 
         # Verify that the header has the correct dates
         ndvi_header = jgrid.load(ndvi_dir)

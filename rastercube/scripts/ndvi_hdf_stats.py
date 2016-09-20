@@ -3,8 +3,8 @@ Script to print statistics about downloaded HDF files
 """
 import argparse
 import numpy as np
-import terrapy.utils as utils
-import terrapy.datasources.modis as modis
+import rastercube.utils as utils
+import rastercube.datasources.modis as modis
 import collections
 
 
@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
 parser.add_argument('--hdfdir', type=str,
                     help='source directory containing '
                          'HDF files, organised in per-year subdirectories'
-                         '(e.g. $TERRAI_DATA/0_input/MOD13Q1.005/HDF/LAT/)')
+                         '(e.g. $RASTERCUBE_DATA/0_input/MOD13Q1.005/HDF/LAT/)')
 
 
 if __name__ == '__main__':

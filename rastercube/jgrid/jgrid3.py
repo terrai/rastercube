@@ -47,31 +47,31 @@ import rastercube.hadoop.common as terrahdfs
 import rastercube.utils as utils
 import pyprind
 from osgeo import osr
-import rastercube.io as terraio
+import rastercube.io as rasterio
 
 
 def read_frac(fname, hdfs_client=None):
     """
     This returns data or None if the fraction is empty
     """
-    if not terraio.fs_exists(fname, hdfs_client):
+    if not rasterio.fs_exists(fname, hdfs_client):
         return None
     else:
         if fname.startswith('hdfs://'):
-            blob = terraio.fs_read(fname, hdfs_client)
+            blob = rasterio.fs_read(fname, hdfs_client)
             return np.load(StringIO.StringIO(blob))
         else:
             # If reading from fs://, we short-circuit fs_read
-            return np.load(terraio.strip_uri_proto(fname, 'fs://'))
+            return np.load(rasterio.strip_uri_proto(fname, 'fs://'))
 
 def write_frac(fname, data, hdfs_client=None):
     if fname.startswith('hdfs://'):
         buf = StringIO.StringIO()
         np.save(buf, data)
-        terraio.fs_write(fname, buf.getvalue(), hdfs_client)
+        rasterio.fs_write(fname, buf.getvalue(), hdfs_client)
     else:
         # Short-circuit _fs_read if reading from fs://
-        fname = terraio.strip_uri_proto(fname, 'fs://')
+        fname = rasterio.strip_uri_proto(fname, 'fs://')
         outdir = os.path.dirname(fname)
         utils.mkdir_p(outdir)
         # If writing to fs://, we short-cirtcuit fs_write
@@ -108,8 +108,8 @@ class Header(object):
                  meta=None, nodataval=None, frac_ndates=None):
         """
         Args:
-            grid_root: The grid root (e.g. fs://$TERRAI_DATA/worldgrid/ndvi
-                or hdfs://worldgrid/ndvi)
+            grid_root: The grid root (e.g. fs:///worldgrid/ndvi
+                or hdfs:///worldgrid/ndvi)
             width, height: the total size of the grid
             frac_width, frac_height : fraction size
             frac_ndates : fraction size along the time axis
@@ -585,10 +585,10 @@ class Header(object):
             a list of tuple (frac_num, time_chunk)
         """
         data_dir = os.path.join(self.grid_root, 'jdata')
-        if not terraio.fs_exists(data_dir, hdfs_client):
+        if not rasterio.fs_exists(data_dir, hdfs_client):
             return np.array([])
         else:
-            fractions = terraio.fs_list(data_dir, hdfs_client)
+            fractions = rasterio.fs_list(data_dir, hdfs_client)
             # fractions is a list of fractions filenames (e.g. 14123.jdata)
             fractions = [frac_id_from_fname(fname) for fname in fractions
                          if fname.endswith('jdata')]
@@ -637,16 +637,16 @@ class Header(object):
     def save(self, hdfs_client=None):
         fname = os.path.join(self.grid_root, 'header.jghdr3')
         blob = json.dumps(self.to_dict())
-        terraio.fs_write(fname, blob, hdfs_client)
+        rasterio.fs_write(fname, blob, hdfs_client)
 
     @staticmethod
     def exists(grid_root, hdfs_client=None):
         fname = os.path.join(grid_root, 'header.jghdr3')
-        return terraio.fs_exists(fname, hdfs_client)
+        return rasterio.fs_exists(fname, hdfs_client)
 
     @staticmethod
     def load(grid_root, hdfs_client=None):
         fname = os.path.join(grid_root, 'header.jghdr3')
-        d = json.loads(terraio.fs_read(fname, hdfs_client))
+        d = json.loads(rasterio.fs_read(fname, hdfs_client))
         grid_root = os.path.dirname(fname)
         return Header.from_dict(grid_root, d)

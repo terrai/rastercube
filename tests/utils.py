@@ -14,13 +14,13 @@ def get_rastercube_dir():
 
 
 def get_testdata_dir():
-    assert 'TERRAI_TEST_DATA' in os.environ, 'You must define TERRAI_TEST_DATA'
-    datadir = os.environ['TERRAI_TEST_DATA']
+    assert 'RASTERCUBE_TEST_DATA' in os.environ, 'You must define TERRAI_TEST_DATA'
+    datadir = os.environ['RASTERCUBE_TEST_DATA']
     assert os.path.exists(datadir), 'testdata dir %s does not exist' % datadir
     return datadir
 
 
-class TerraiTest(unittest.TestCase):
+class RasterCubeTest(unittest.TestCase):
     def setUp(self):
-        # Point the test to the test data directory
-        os.environ['TERRAI_DATA'] = get_testdata_dir()
+        # Point the datadir to the test datadir
+        os.environ['RASTERCUBE_DATA'] = get_testdata_dir()

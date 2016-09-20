@@ -8,10 +8,10 @@ import sys
 import time
 import argparse
 import numpy as np
-import terrapy.utils as utils
-import terrapy.datasources.modis as modis
-import terrapy.jgrid as jgrid
-import terrapy.worldgrid.grids as grids
+import rastercube.utils as utils
+import rastercube.datasources.modis as modis
+import rastercube.jgrid as jgrid
+import rastercube.worldgrid.grids as grids
 import joblib
 
 
@@ -21,7 +21,7 @@ parser.add_argument('--tile', type=str, required=True,
                     help='tile name (e.g. h17v07)')
 parser.add_argument('--noconfirm', action='store_true',
                     help='Skip confirmation')
-parser.add_argument('--worldgrid', type=str, default=None,
+parser.add_argument('--worldgrid', type=str, required=True,
                     help='worldgrid root')
 parser.add_argument('--nworkers', type=int, default=None,
                     help='Number of workers (by default all)')
@@ -131,8 +131,6 @@ if __name__ == '__main__':
     tilename = args.tile
     modis_dir = utils.get_modis_hdf_dir()
     worldgrid = args.worldgrid
-    if worldgrid is None:
-        worldgrid = utils.get_worldgrid()
     ndvi_root = os.path.join(worldgrid, 'ndvi')
     qa_root = os.path.join(worldgrid, 'qa')
     nworkers = args.nworkers

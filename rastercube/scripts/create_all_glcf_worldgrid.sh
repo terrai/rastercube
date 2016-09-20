@@ -1,5 +1,5 @@
 #!/bin/bash
-GLCF_TILES=`find $TERRAI_DATA/0_input/glcf_5.1/2004.01.01 -maxdepth 1 -mindepth 1 -type d -printf '%f '`
+GLCF_TILES=`find $RASTERCUBE_DATA/0_input/glcf_5.1/2004.01.01 -maxdepth 1 -mindepth 1 -type d -printf '%f '`
 
 #WORLDGRID=fs:///home/terrai/data/sv2455/jgrids/worldgrid
 WORLDGRID=hdfs:///user/terrai/worldgrid/

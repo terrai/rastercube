@@ -5,8 +5,8 @@ This is useful to synchronize dates between multiple jgrids
 import os
 import argparse
 import numpy as np
-import terrapy.utils as utils
-import terrapy.datasources.modis as modis
+import rastercube.utils as utils
+import rastercube.datasources.modis as modis
 
 
 parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
@@ -15,7 +15,7 @@ parser.add_argument('--tile', type=str, required=True,
 parser.add_argument('--srcdir', type=str, required=False,
                     help='source directory containing '
                          'HDF files, organised in per-year subdirectories'
-                         '(e.g. $TERRAI_DATA/0_input/MOD13Q1.005/HDF/LAT/)')
+                         '(e.g. $RASTERCUBE_DATA/0_input/MOD13Q1.005/HDF/LAT/)')
 parser.add_argument('--outfile', type=str, required=False,
                     help='Out CSV file containing the dates ')
 parser.add_argument('--satellite', type=str, choices=['aqua', 'terra'],

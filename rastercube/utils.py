@@ -30,37 +30,24 @@ def asset_fname(relpath):
     return pkg_resources.resource_filename(rastercube.__name__, relpath)
 
 
-def get_terrai_core():
-    assert 'TERRAI_CORE' in os.environ
-    return os.environ['TERRAI_CORE']
-
-
-def get_terrai_data():
-    assert 'TERRAI_DATA' in os.environ
-    return os.environ['TERRAI_DATA']
+def get_data_dir():
+    assert 'RASTERCUBE_DATA' in os.environ
+    return os.environ['RASTERCUBE_DATA']
 
 
 def get_worldgrid():
-    assert 'TERRAI_WORLDGRID' in os.environ
-    return os.environ['TERRAI_WORLDGRID']
+    assert 'RASTERCUBE_WORLDGRID' in os.environ
+    return os.environ['RASTERCUBE_WORLDGRID']
 
 
 def get_modis_hdf_dir():
     """Returns the default directory where we store MODIS HDF files"""
-    return os.path.join(get_terrai_data(), '0_input', 'MODIS_HDF')
+    return os.path.join(get_data_dir(), '0_input', 'MODIS_HDF')
 
 
 def get_glcf_tif_dir():
     """Returns the default directory where we store MODIS HDF files"""
-    return os.path.join(get_terrai_data(), '0_input', 'glcf_5.1')
-
-
-def get_jgrid2_tile_dir(tilename):
-    return os.path.join(get_terrai_data(), '2_jgrids2', tilename)
-
-
-def get_hdf_tile_dir(tilename):
-    return os.path.join(get_terrai_data(), '2_hdf', tilename)
+    return os.path.join(get_data_dir(), '0_input', 'glcf_5.1')
 
 
 def mkdir_p(path):

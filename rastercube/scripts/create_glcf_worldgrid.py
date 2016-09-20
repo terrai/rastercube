@@ -4,7 +4,7 @@ Import the given GLCF tile into the jgrid3 worldgrid.
 Example invocation :
 
 python scripts/dev/create_glcf_worldgrid.py --year 2004 --tile ML1920 \
-    --grid_root=hdfs://user/terrai/worldgrid/glcf/2004
+    --grid_root=hdfs://user/me/worldgrid/glcf/2004
 """
 import os
 import sys
@@ -15,10 +15,10 @@ import argparse
 import tempfile
 import numpy as np
 import multiprocessing
-import terrapy.utils as utils
-import terrapy.datasources.modis as modis
-import terrapy.jgrid as jgrid
-import terrapy.worldgrid.grids as grids
+import rastercube.utils as utils
+import rastercube.datasources.modis as modis
+import rastercube.jgrid as jgrid
+import rastercube.worldgrid.grids as grids
 from osgeo import gdal
 
 
@@ -30,7 +30,7 @@ parser.add_argument('--noconfirm', action='store_true',
                     help='Skip confirmation')
 parser.add_argument('--glcf_dir', type=str, required=False,
                     help='directory where input GLCF files are stored')
-parser.add_argument('--glcf_grid_root', type=str, required=False,
+parser.add_argument('--glcf_grid_root', type=str, required=True,
                     help='the new GLCF grid_root (a fs:// or hdfs://)')
 parser.add_argument('--force_all', action='store_true',
                     help='If True, will recreate all fractions')
@@ -70,8 +70,7 @@ if __name__ == '__main__':
 
     glcf_grid_root = args.glcf_grid_root
     if glcf_grid_root is None:
-        glcf_grid_root = 'hdfs:///user/terrai/worldgrid/glcf/%d/' % year
-
+        glcf_grid_root = os.path.join(utils.get_worldgrid(), 'glcf/%d' % year)
     worldgrid = grids.GLCFGrid()
 
     if not jgrid.Header.exists(glcf_grid_root):
