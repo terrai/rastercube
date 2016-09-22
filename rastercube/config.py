@@ -25,10 +25,3 @@ MODIS_TERRA_TILES = [
     'h28v09', 'h29v09', 'h30v09', 'h31v09', 'h32v09',
 ]
 MODIS_AQUA_TILES = list(MODIS_TERRA_TILES)
-
-# We train on 2000 - 2003 (training_year_to is exclusive)
-TRAINING_YEAR_TO = 2004
-# This is used to remove non-vegetation pixels such as mountains, snow and
-# water areas. A pixel that has less than MIN_NVALIDS_QA_IN_TRAIN valids qa
-# during the training years will be masked
-MIN_NVALIDS_QA_IN_TRAIN = 10
