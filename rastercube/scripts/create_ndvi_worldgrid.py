@@ -1,12 +1,17 @@
 """
-Import the given MODIS tile into the jgrid3 worldgrid. Assert that the
-MODIS tile contains (at least) the requested dates
+Import the given MODIS tile into the provided NDVI and QA worldgrid.
+Assert that the MODIS tile contains (at least) the requested dates.
 
-Example invocation :
+Note that this require a .csv file with NDVI dates to import. This file
+can be create with the ``ndvi_collect_dates.py`` script.
 
-python scripts/dev/create_ndvi_worldgrid.py --tile h10v09 \
-    --grid_root=hdfs://user/me/worldgrid/ndvi/
-    --dates_csv=$RASTERCUBE_DATA/2_jgrids2/ndvi_dates.csv
+Example invocation::
+
+    python rastercube/scripts/create_ndvi_worldgrid.py
+        --tile=h10v09
+        --worldgrid=hdfs:///user/test/
+        --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.2.csv
+
 """
 import os
 import sys
@@ -23,17 +28,16 @@ import rastercube.jgrid as jgrid
 import rastercube.worldgrid.grids as grids
 
 
-parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
+parser = argparse.ArgumentParser(description="Create a new NDVI worldgrid")
+
 parser.add_argument('--tile', type=str, required=True,
                     help='tile name (e.g. h17v07)')
 parser.add_argument('--noconfirm', action='store_true',
                     help='Skip confirmation')
 parser.add_argument('--modis_dir', type=str, required=False,
                     help='directory where input MODIS files are stored')
-parser.add_argument('--ndvi_grid_root', type=str, required=False,
-                    help='the new NDVI grid_root (a fs:// or hdfs://)')
-parser.add_argument('--qa_grid_root', type=str, required=False,
-                    help='the new QA grid_root (a fs:// or hdfs://)')
+parser.add_argument('--worldgrid', type=str, required=True,
+                    help='worldgrid root')
 # If we have fractions of 400x400x200 and store int16, we get
 # 400 * 400 * 200 * 2 / (1024 * 1024.) = 61MB
 parser.add_argument('--frac_ndates', type=int, default=200,
@@ -172,6 +176,10 @@ def _mp_write_frac(args):
 
 
 if __name__ == '__main__':
+    # Print help if no arguments are provided
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
     args = parser.parse_args()
 
     tilename = args.tile
@@ -183,12 +191,9 @@ if __name__ == '__main__':
 
     nworkers = args.nworkers
 
-    ndvi_grid_root = args.ndvi_grid_root
-    qa_grid_root = args.qa_grid_root
-    if ndvi_grid_root is None:
-        ndvi_grid_root = os.path.join(utils.get_worldgrid(), 'ndvi')
-    if qa_grid_root is None:
-        qa_grid_root = os.path.join(utils.get_worldgrid(), 'qa')
+    worldgrid = args.worldgrid
+    ndvi_grid_root = os.path.join(worldgrid, 'ndvi')
+    qa_grid_root = os.path.join(worldgrid, 'qa')
 
     if not jgrid.Header.exists(ndvi_grid_root):
         assert args.dates_csv is not None

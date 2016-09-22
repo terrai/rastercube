@@ -1,5 +1,12 @@
 """
 Integrates MODIS images for a new date to an existing worldgrid
+
+Example invocation::
+
+    python rastercube/scripts/complete_ndvi_worldgrid.py
+        --tile=h10v09
+        --worldgrid=hdfs:///user/test/
+        --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.3.csv
 """
 from __future__ import division
 

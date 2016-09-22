@@ -1,5 +1,11 @@
 """
-Script to print statistics about downloaded HDF files
+Script to print statistics about downloaded HDF files. This prints NDVI tiles
+with incomplete dates.
+
+Example invocation::
+
+    python rastercube/scripts/ndvi_hdf_stats.py
+
 """
 import argparse
 import numpy as np

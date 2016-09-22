@@ -1,6 +1,14 @@
 """
-Script to extract NDVI dates to a CSV.
-This is useful to synchronize dates between multiple jgrids
+Script to extract NDVI dates to a CSV. This scans the MODIS HDF files for
+a particular tile and extract the available dates.
+This is useful to synchronize dates between multiple worldgrids
+
+Example invocation::
+
+    python rastercube/scripts/ndvi_collect_dates.py
+        --tile=h10v09
+        --outfile=$RASTERCUBE_DATA/1_manual/ndvi_dates.csv
+
 """
 import os
 import argparse

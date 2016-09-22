@@ -1,10 +1,12 @@
 """
-Import the given GLCF tile into the jgrid3 worldgrid.
+Import the given GLCF tile into the provided worldgrid.
 
-Example invocation :
+Example invocation::
 
-python scripts/dev/create_glcf_worldgrid.py --year 2004 --tile ML1920 \
-    --grid_root=hdfs://user/me/worldgrid/glcf/2004
+    python rastercube/scripts/create_glcf_worldgrid.py
+        --year 2004
+        --tile ML1920
+        --worldgrid=hdfs:///user/test/
 """
 import os
 import sys
@@ -30,8 +32,8 @@ parser.add_argument('--noconfirm', action='store_true',
                     help='Skip confirmation')
 parser.add_argument('--glcf_dir', type=str, required=False,
                     help='directory where input GLCF files are stored')
-parser.add_argument('--glcf_grid_root', type=str, required=True,
-                    help='the new GLCF grid_root (a fs:// or hdfs://)')
+parser.add_argument('--worldgrid', type=str, required=True,
+                    help='worldgrid root')
 parser.add_argument('--force_all', action='store_true',
                     help='If True, will recreate all fractions')
 
@@ -68,9 +70,7 @@ if __name__ == '__main__':
     if glcf_dir is None:
         glcf_dir = utils.get_glcf_tif_dir()
 
-    glcf_grid_root = args.glcf_grid_root
-    if glcf_grid_root is None:
-        glcf_grid_root = os.path.join(utils.get_worldgrid(), 'glcf/%d' % year)
+    glcf_grid_root = os.path.join(args.worldgrid, 'glcf/%d' % year)
     worldgrid = grids.GLCFGrid()
 
     if not jgrid.Header.exists(glcf_grid_root):
