@@ -38,19 +38,13 @@ def add_region_arg(parser):
              '  <region_file.geojson>:region1,region2'
     )
 
-
 class Regions(object):
     """
-    A helper class to load jGrid3 slices covering a given region
+    A helper class to load polygons defining regions from geojson.
     Region files should be simple geojson files containing Polygon
-    features. Each polygon should have a name attribute that will be used
-    to look it up.
+    features. Each polygon should have a name attribute that will be
+    used to look it up.
     """
-    MODIS_TILES = utils.asset_fname('assets/modis_tiles.geojson')
-    TEST_ZONES_1 = utils.asset_fname('assets/test_zones_1.geojson')
-    REGIONS_1 = utils.asset_fname('assets/regions_1.geojson')
-    NDVI_FRACS = utils.asset_fname('assets/ndvi_fracs.geojson')
-
     def __init__(self, fname):
         ds = ogr.Open(fname)
         assert ds is not None, "Couldn't open %s" % fname
@@ -106,13 +100,19 @@ class Regions(object):
         return self.polygons[name]
 
 
-def modis_tiles():
-    return Regions(Regions.MODIS_TILES)
+REGIONS_COLLECTIONS = {}
 
 
-def test_zones_1():
-    return Regions(Regions.TEST_ZONES_1)
+def register_regions_collection(geojson_fname):
+    """
+    Given a geojson filename, will register it as a new region
+    """
+    name, ext = os.path.splitext(os.path.basename(geojson_fname))
+    assert ext == '.geojson'
+    REGIONS_COLLECTIONS[name] = Regions(geojson_fname)
 
+register_regions_collection(utils.asset_fname('assets/modis_tiles.geojson'))
+register_regions_collection(utils.asset_fname('assets/continents.geojson'))
 
 def polygon_for_region(regspec):
     """
@@ -122,14 +122,7 @@ def polygon_for_region(regspec):
     Returns the polygon for said region
     """
     colname, regname = regspec.split('.')
-    if colname == 'test_zones_1':
-        r = Regions(Regions.TEST_ZONES_1)
-    elif colname == 'modis_tiles':
-        r = Regions(Regions.MODIS_TILES)
-    elif colname == 'regions_1':
-        r = Regions(Regions.REGIONS_1)
-    elif colname == 'ndvi_fracs':
-        r = Regions(Regions.NDVI_FRACS)
-    else:
+    if colname not in REGIONS_COLLECTIONS:
         raise ValueError('Unknown region collection %s' % colname)
-    return r.polygon_for_region(regname)
+    reg = REGIONS_COLLECTIONS[colname]
+    return reg.polygon_for_region(regname)
