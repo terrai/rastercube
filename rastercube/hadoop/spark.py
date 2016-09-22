@@ -49,7 +49,7 @@ def _process_frac_binary(kv, output_root, frac_version, map_fn):
     return out_fname
 
 
-def add_egg_to_context(sc):
+def add_egg_to_context(sc, egg_fname):
     """
     Add the rastercube egg to the sparkcontext.
     Note that this mode of distribution only works if the egg is compiled
@@ -57,13 +57,35 @@ def add_egg_to_context(sc):
     (same python libs, same architecture). Otherwise, if the native modules
     are linked to different python versions, things will crash.
     """
-    egg_fname = os.path.join(
-        os.path.dirname(rastercube.__file__),
-        '..', 'dist', 'rastercube-0.1-py2.7-linux-x86_64.egg'
-    )
     assert os.path.exists(egg_fname), ('Couldn\'t find %s, build with ' +
             'python setup.py bdist_egg') % egg_fname
     sc.addPyFile(egg_fname)
+
+
+def spark_context(appname, master=None, exec_mem='4g', nworkers=None,
+                  verbose=False):
+    """
+    Returns a new spark context that can access rastercube
+
+    master: The spark Master. If None, will fallback to config.SPARK_MASTER
+    """
+    if master is None:
+        master = config.SPARK_MASTER
+    from pyspark import SparkContext, SparkConf
+    conf = SparkConf().setMaster(master).setAppName(appname)
+    conf.set('spark.executor.memory', exec_mem)
+    if nworkers is not None:
+        conf.set('spark.cores.max', '%d' % nworkers)
+    sc = SparkContext(conf=conf)
+    if not verbose:
+        sc.setLogLevel("WARN")
+    egg_fname = os.path.join(
+        os.path.dirname(rastercube.__file__),
+        # TODO: Should generate version/os automatically
+        '..', 'dist', 'rastercube-0.1-py2.7-linux-x86_64.egg'
+    )
+    add_egg_to_context(sc, egg_fname)
+    return sc
 
 
 class SparkPipelineStep(object):
@@ -151,13 +173,7 @@ class SparkPipelineStep(object):
             len(self.todo_fractions), self.total_num_fracs)
 
     def run(self, n_cores=None):
-        from pyspark import SparkContext, SparkConf
-        conf = SparkConf().setMaster(config.SPARK_MASTER) \
-                          .setAppName(self.name)
-        if n_cores is not None:
-            conf.set('spark.cores.max', '%d' % n_cores)
-
-        self.sc = SparkContext(conf=conf)
+        self.sc = spark_context(self.name, nworkers=n_cores)
         # Add dependencies
         for fname in self.dep_files:
             self.sc.addFile(fname)
