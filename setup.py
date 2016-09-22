@@ -18,8 +18,8 @@ if IS_OSX:
     # with) and osx' xcode ships with a pre c++11 libstdc++ (which causes
     # errors because the c++11 stuff is in tr1/).
     # Also, clang on osx doesn't support openmp
-    os.environ['CXX'] = '/usr/local/bin/g++-4.9'
-    os.environ['CC'] = '/usr/local/bin/gcc-4.9'
+    os.environ['CXX'] = '/usr/local/bin/g++-6'
+    os.environ['CC'] = '/usr/local/bin/gcc-6'
 
     cflags = []
     ldflags = []
