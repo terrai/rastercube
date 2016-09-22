@@ -8,5 +8,6 @@ Contents:
    :numbered: 3
 
    overview
+   examples
    scripts
    api

@@ -69,6 +69,7 @@ setup(
         'joblib',
         'PIL',
         'nbconvert==4.2.0',
+        'nbsphinx',
     ],
     setup_requires=[
         'pytest-runner',
