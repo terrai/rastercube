@@ -84,8 +84,7 @@ class CompleteNDVIWorldgridTest(test_utils.RasterCubeTest):
                 create_script,
                 '--tile=h29v07',
                 '--noconfirm',
-                '--ndvi_grid_root=%s' % os.path.join(rootdir, 'ndvi'),
-                '--qa_grid_root=%s' % os.path.join(rootdir, 'qa'),
+                '--worldgrid=%s' % rootdir,
                 '--frac_ndates=%d' % frac_ndates,
                 '--dates_csv=%s' % dates_csv,
                 # speed things up
