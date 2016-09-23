@@ -1,10 +1,6 @@
 rastercube documentation
 ========================
 
-.. image:: images/logo.png
-   :width: 50%
-   :align: center
-
 .. toctree::
    :maxdepth: 2
    :numbered: 3
