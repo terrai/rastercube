@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Scripts &mdash; rastercube 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rastercube 1.0 documentation" href="index.html"/>
+        <link rel="next" title="4. API" href="api.html"/>
+        <link rel="prev" title="2.2.2. Loading NDVI and QA data" href="notebooks/load_ndvi_qa.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> rastercube
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">2. Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">3. Scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-hdf-files">3.1. Downloading HDF files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stats-about-available-hdf-files">3.2. Stats about available HDF files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-new-ndvi-worldgrid">3.3. Creating a new NDVI worldgrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-new-glcf-worldgrid">3.4. Creating a new GLCF worldgrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collecting-the-available-ndvi-dates-to-a-csv">3.5. Collecting the available NDVI dates to a .csv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#completing-a-ndvi-worldgrid-when-the-data-gets-updated">3.6. Completing a NDVI worldgrid when the data gets updated</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporting-the-fractions-of-a-grid-to-a-shapefile">3.7. Exporting the fractions of a grid to a shapefile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#printing-informations-about-a-worldgrid">3.8. Printing informations about a worldgrid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">4. API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">rastercube</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>3. Scripts</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/scripts.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="scripts">
+<h1>3. Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="downloading-hdf-files">
+<h2>3.1. Downloading HDF files<a class="headerlink" href="#downloading-hdf-files" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/ndvi_hdf_download.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.ndvi_hdf_download"></span><p>Script to download NDVI HDF files</p>
+<p>A few notes on how this works :</p>
+<p>The MODIS website we use is :</p>
+<blockquote>
+<div><a class="reference external" href="http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/">http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/</a> (for Terra)
+<a class="reference external" href="http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/">http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/</a> (for Aqua)</div></blockquote>
+<p>On the MODIS website, each date has a HTML files that list the available HDF
+files. We build a cache of the HTML for each date so we don&#8217;t have to fetch
+it every time (since this is <em>REALLY</em> slow)</p>
+<p>This cache is saved in &#8211;modis_cache_dir (usually
+$RASTERCUBE_DATA/0_input/modis_www_cache)</p>
+<p>Then, we have to parse each date HTML file to get the list of available HDF
+files and download the HDF files that are not present on the filesystem.</p>
+</div>
+<div class="section" id="stats-about-available-hdf-files">
+<h2>3.2. Stats about available HDF files<a class="headerlink" href="#stats-about-available-hdf-files" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/ndvi_hdf_statspy</span></code></p>
+<span class="target" id="module-rastercube.scripts.ndvi_hdf_stats"></span><p>Script to print statistics about downloaded HDF files. This prints NDVI tiles
+with incomplete dates.</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/ndvi_hdf_stats.py
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-new-ndvi-worldgrid">
+<h2>3.3. Creating a new NDVI worldgrid<a class="headerlink" href="#creating-a-new-ndvi-worldgrid" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/create_ndvi_worldgrid.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.create_ndvi_worldgrid"></span><p>Import the given MODIS tile into the provided NDVI and QA worldgrid.
+Assert that the MODIS tile contains (at least) the requested dates.</p>
+<p>Note that this require a .csv file with NDVI dates to import. This file
+can be create with the <code class="docutils literal"><span class="pre">ndvi_collect_dates.py</span></code> script.</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/create_ndvi_worldgrid.py
+    --tile=h10v09
+    --worldgrid=hdfs:///user/test/
+    --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.2.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-new-glcf-worldgrid">
+<h2>3.4. Creating a new GLCF worldgrid<a class="headerlink" href="#creating-a-new-glcf-worldgrid" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/create_glcf_worldgrid.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.create_glcf_worldgrid"></span><p>Import the given GLCF tile into the provided worldgrid.</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/create_glcf_worldgrid.py
+    --year 2004
+    --tile ML1920
+    --worldgrid=hdfs:///user/test/
+</pre></div>
+</div>
+</div>
+<div class="section" id="collecting-the-available-ndvi-dates-to-a-csv">
+<h2>3.5. Collecting the available NDVI dates to a .csv<a class="headerlink" href="#collecting-the-available-ndvi-dates-to-a-csv" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/ndvi_collect_dates.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.ndvi_collect_dates"></span><p>Script to extract NDVI dates to a CSV. This scans the MODIS HDF files for
+a particular tile and extract the available dates.
+This is useful to synchronize dates between multiple worldgrids</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/ndvi_collect_dates.py
+    --tile=h10v09
+    --outfile=$RASTERCUBE_DATA/1_manual/ndvi_dates.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="completing-a-ndvi-worldgrid-when-the-data-gets-updated">
+<h2>3.6. Completing a NDVI worldgrid when the data gets updated<a class="headerlink" href="#completing-a-ndvi-worldgrid-when-the-data-gets-updated" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/complete_ndvi_worldgrid.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.complete_ndvi_worldgrid"></span><p>Integrates MODIS images for a new date to an existing worldgrid</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/complete_ndvi_worldgrid.py
+    --tile=h10v09
+    --worldgrid=hdfs:///user/test/
+    --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.3.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="exporting-the-fractions-of-a-grid-to-a-shapefile">
+<h2>3.7. Exporting the fractions of a grid to a shapefile<a class="headerlink" href="#exporting-the-fractions-of-a-grid-to-a-shapefile" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/worldgrid_fracs_to_shapefile.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.worldgrid_fracs_to_shapefile"></span><p>Exports the fractions of a worldgrid to a shapefile.</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/worldgrid_fracs_to_shapefile
+    --grid_root=hdfs:///user/test/ndvi
+    --outfile=$HOME/Desktop/ndvi_fracs.shp
+</pre></div>
+</div>
+<div class="figure align-center" id="id1">
+<a class="reference internal image-reference" href="_images/qgis_ndvi_fracs.png"><img alt="_images/qgis_ndvi_fracs.png" src="_images/qgis_ndvi_fracs.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-text">NDVI fractions shapefile viewed in QGIS</span></p>
+</div>
+</div>
+<div class="section" id="printing-informations-about-a-worldgrid">
+<h2>3.8. Printing informations about a worldgrid<a class="headerlink" href="#printing-informations-about-a-worldgrid" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">rastercube/scripts/worldgrid_info.py</span></code></p>
+<span class="target" id="module-rastercube.scripts.worldgrid_info"></span><p>Print infos about a worldgrid</p>
+<p>Example invocation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/worldgrid_info.py
+    --grid_root=hdfs:///user/test/ndvi
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="4. API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="notebooks/load_ndvi_qa.html" class="btn btn-neutral" title="2.2.2. Loading NDVI and QA data" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, 2016 rastercube.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

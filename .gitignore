@@ -4,7 +4,6 @@ rastercube.egg-info
 *.pyc
 *.so
 parasid_log/
-doc/_build/
 _logs/
 build/
 dist/
