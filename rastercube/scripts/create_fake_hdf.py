@@ -91,6 +91,8 @@ if __name__ == '__main__':
         '%s13Q1.A%d%d.%s.005.0000000000000.hdf' % (prefix, year, doy, tilename)
     )
 
+    assert not os.path.exists(output_fname), "%s already exists" % output_fname
+
     print 'Using %s as the model HDF' % model_hdf
     print 'year : %d' % year
     print 'doy : %d' % doy
