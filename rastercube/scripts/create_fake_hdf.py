@@ -40,7 +40,7 @@ parser.add_argument('--tile', type=str, required=True,
 parser.add_argument('--noconfirm', action='store_true',
                     help='Skip confirmation')
 parser.add_argument('--missing_date', type=str, required=True,
-                    help='the missing date in YYYYddd format')
+                    help='the missing date in YYYYddd format (e.g. 2007137)')
 parser.add_argument('--prefix', type=str, required=True,
                     help='satellite type (mod or myd)')
 parser.add_argument('--modis_dir', type=str, required=False,
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     print 'output filename : %s' % output_fname
 
     if not args.noconfirm:
-        if not utils.confirm(prompt='Proceed?', resp=True):
+        if not utils.confirm(prompt='Proceed?', resp=False):
             sys.exit(-1)
 
     shutil.copyfile(model_hdf, output_fname)
