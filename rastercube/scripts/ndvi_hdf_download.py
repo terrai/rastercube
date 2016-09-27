@@ -28,6 +28,7 @@ Example invocation::
 #requests_cache.install_cache()
 
 import os
+import sys
 import argparse
 from datetime import datetime
 import calendar
@@ -239,7 +240,13 @@ def _do_download_aria2(files):
                 del url, dst_filename
 
         # Download using aria2
-        cmd = ['/usr/bin/aria2c', '-i %s' % download_fname]
+        cmd = [
+            '/usr/bin/aria2c',
+            '--http-user=%s' % config.MODIS_HTTP_USER,
+            '--http-pass=%s' % config.MODIS_HTTP_PASS,
+            '-i %s' % download_fname
+        ]
+
         # Set the cwd to / because aria2 interpret filenames as relative
         # even if they start with /
         subprocess.check_call(cmd, cwd='/')
@@ -363,6 +370,7 @@ if __name__ == '__main__':
 
     # Download the files
     if args.force_wget:
+        assert False, "wget support is not yet working because of authentication"
         download_files_wget(missing_files)
     else:
         download_files_aria2(missing_files)
