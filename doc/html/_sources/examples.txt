@@ -32,6 +32,20 @@ MODIS tile listing and download the tabs specified in the config.
 
   python rastercube/scripts/ndvi_hdf_download.py
 
+Run create_ndvi_worldgrid.py
+----------------------------
+
+.. important::
+
+    TODO
+
+Updating the worldgrid when new dates are available
+===================================================
+
+.. important::
+
+    TODO
+
 
 Example notebooks
 =================
