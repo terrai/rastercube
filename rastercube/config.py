@@ -1,3 +1,13 @@
+"""
+This is the rastercube config file. To customize/override options, create
+a rastercube_config.py file somewhere on your filesystem and point the
+``$RASTERCUBE_CONFIG`` environment variable to it.
+
+For example in your bashrc add::
+
+    export RASTERCUBE_CONFIG=$RASTERCUBE_DATA/1_manual/rastercube_config.py
+
+"""
 import os
 
 HDFS_MASTER = 'IICT-SV2455.lan.iict.ch'
@@ -6,6 +16,10 @@ SPARK_MASTER = os.environ.get('SPARK_MASTER',
 
 MODIS_TERRA_URL = 'http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/'
 MODIS_AQUA_URL = 'http://e4ftl01.cr.usgs.gov/MOLA/MYD13Q1.005/'
+
+# You should set that in your config file
+MODIS_HTTP_USER = ''
+MODIS_HTTP_PASS = ''
 
 MODIS_TERRA_TILES = [
     # central america
@@ -27,3 +41,6 @@ MODIS_TERRA_TILES = [
     'h28v09', 'h29v09', 'h30v09', 'h31v09', 'h32v09',
 ]
 MODIS_AQUA_TILES = list(MODIS_TERRA_TILES)
+
+if 'RASTERCUBE_CONFIG' in os.environ:
+    execfile(os.environ['RASTERCUBE_CONFIG'])
