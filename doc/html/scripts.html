@@ -84,7 +84,7 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">2. Examples</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">3. Scripts</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Scripts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-hdf-files">3.1. Downloading HDF files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#stats-about-available-hdf-files">3.2. Stats about available HDF files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-a-new-ndvi-worldgrid">3.3. Creating a new NDVI worldgrid</a></li>
@@ -118,7 +118,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -184,7 +184,7 @@
 <p>The MODIS website we use is :</p>
 <blockquote>
 <div><a class="reference external" href="http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/">http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/</a> (for Terra)
-<a class="reference external" href="http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/">http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/</a> (for Aqua)</div></blockquote>
+<a class="reference external" href="http://e4ftl01.cr.usgs.gov/MOLA/MYD13Q1.005/">http://e4ftl01.cr.usgs.gov/MOLA/MYD13Q1.005/</a> (for Aqua)</div></blockquote>
 <p>On the MODIS website, each date has a HTML files that list the available HDF
 files. We build a cache of the HTML for each date so we don&#8217;t have to fetch
 it every time (since this is <em>REALLY</em> slow)</p>
@@ -192,6 +192,10 @@ it every time (since this is <em>REALLY</em> slow)</p>
 $RASTERCUBE_DATA/0_input/modis_www_cache)</p>
 <p>Then, we have to parse each date HTML file to get the list of available HDF
 files and download the HDF files that are not present on the filesystem.</p>
+<p>Example invocation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rastercube</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">ndvi_hdf_download</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="stats-about-available-hdf-files">
 <h2>3.2. Stats about available HDF files<a class="headerlink" href="#stats-about-available-hdf-files" title="Permalink to this headline">¶</a></h2>
@@ -199,7 +203,7 @@ files and download the HDF files that are not present on the filesystem.</p>
 <span class="target" id="module-rastercube.scripts.ndvi_hdf_stats"></span><p>Script to print statistics about downloaded HDF files. This prints NDVI tiles
 with incomplete dates.</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/ndvi_hdf_stats.py
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rastercube</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">ndvi_hdf_stats</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 </div>
@@ -211,7 +215,7 @@ Assert that the MODIS tile contains (at least) the requested dates.</p>
 <p>Note that this require a .csv file with NDVI dates to import. This file
 can be create with the <code class="docutils literal"><span class="pre">ndvi_collect_dates.py</span></code> script.</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/create_ndvi_worldgrid.py
+<div class="highlight-default"><div class="highlight"><pre><span></span>python rastercube/scripts/create_ndvi_worldgrid.py
     --tile=h10v09
     --worldgrid=hdfs:///user/test/
     --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.2.csv
@@ -223,10 +227,10 @@ can be create with the <code class="docutils literal"><span class="pre">ndvi_col
 <p><code class="docutils literal"><span class="pre">rastercube/scripts/create_glcf_worldgrid.py</span></code></p>
 <span class="target" id="module-rastercube.scripts.create_glcf_worldgrid"></span><p>Import the given GLCF tile into the provided worldgrid.</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/create_glcf_worldgrid.py
-    --year 2004
-    --tile ML1920
-    --worldgrid=hdfs:///user/test/
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rastercube</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">create_glcf_worldgrid</span><span class="o">.</span><span class="n">py</span>
+    <span class="o">--</span><span class="n">year</span> <span class="mi">2004</span>
+    <span class="o">--</span><span class="n">tile</span> <span class="n">ML1920</span>
+    <span class="o">--</span><span class="n">worldgrid</span><span class="o">=</span><span class="n">hdfs</span><span class="p">:</span><span class="o">///</span><span class="n">user</span><span class="o">/</span><span class="n">test</span><span class="o">/</span>
 </pre></div>
 </div>
 </div>
@@ -237,7 +241,7 @@ can be create with the <code class="docutils literal"><span class="pre">ndvi_col
 a particular tile and extract the available dates.
 This is useful to synchronize dates between multiple worldgrids</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/ndvi_collect_dates.py
+<div class="highlight-default"><div class="highlight"><pre><span></span>python rastercube/scripts/ndvi_collect_dates.py
     --tile=h10v09
     --outfile=$RASTERCUBE_DATA/1_manual/ndvi_dates.csv
 </pre></div>
@@ -248,7 +252,7 @@ This is useful to synchronize dates between multiple worldgrids</p>
 <p><code class="docutils literal"><span class="pre">rastercube/scripts/complete_ndvi_worldgrid.py</span></code></p>
 <span class="target" id="module-rastercube.scripts.complete_ndvi_worldgrid"></span><p>Integrates MODIS images for a new date to an existing worldgrid</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/complete_ndvi_worldgrid.py
+<div class="highlight-default"><div class="highlight"><pre><span></span>python rastercube/scripts/complete_ndvi_worldgrid.py
     --tile=h10v09
     --worldgrid=hdfs:///user/test/
     --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.3.csv
@@ -260,7 +264,7 @@ This is useful to synchronize dates between multiple worldgrids</p>
 <p><code class="docutils literal"><span class="pre">rastercube/scripts/worldgrid_fracs_to_shapefile.py</span></code></p>
 <span class="target" id="module-rastercube.scripts.worldgrid_fracs_to_shapefile"></span><p>Exports the fractions of a worldgrid to a shapefile.</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/worldgrid_fracs_to_shapefile
+<div class="highlight-default"><div class="highlight"><pre><span></span>python rastercube/scripts/worldgrid_fracs_to_shapefile
     --grid_root=hdfs:///user/test/ndvi
     --outfile=$HOME/Desktop/ndvi_fracs.shp
 </pre></div>
@@ -275,8 +279,8 @@ This is useful to synchronize dates between multiple worldgrids</p>
 <p><code class="docutils literal"><span class="pre">rastercube/scripts/worldgrid_info.py</span></code></p>
 <span class="target" id="module-rastercube.scripts.worldgrid_info"></span><p>Print infos about a worldgrid</p>
 <p>Example invocation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python rastercube/scripts/worldgrid_info.py
-    --grid_root=hdfs:///user/test/ndvi
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rastercube</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">worldgrid_info</span><span class="o">.</span><span class="n">py</span>
+    <span class="o">--</span><span class="n">grid_root</span><span class="o">=</span><span class="n">hdfs</span><span class="p">:</span><span class="o">///</span><span class="n">user</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">ndvi</span>
 </pre></div>
 </div>
 </div>

@@ -6,7 +6,8 @@ A few notes on how this works :
 The MODIS website we use is :
 
     http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/ (for Terra)
-    http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/ (for Aqua)
+
+    http://e4ftl01.cr.usgs.gov/MOLA/MYD13Q1.005/ (for Aqua)
 
 On the MODIS website, each date has a HTML files that list the available HDF
 files. We build a cache of the HTML for each date so we don't have to fetch
@@ -17,6 +18,11 @@ $RASTERCUBE_DATA/0_input/modis_www_cache)
 
 Then, we have to parse each date HTML file to get the list of available HDF
 files and download the HDF files that are not present on the filesystem.
+
+Example invocation::
+
+    python rastercube/scripts/ndvi_hdf_download.py
+
 """
 #import requests_cache
 #requests_cache.install_cache()
