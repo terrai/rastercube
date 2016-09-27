@@ -8,6 +8,8 @@ MODIS_TERRA_URL = 'http://e4ftl01.cr.usgs.gov/MOLT/MOD13Q1.005/'
 MODIS_AQUA_URL = 'http://e4ftl01.cr.usgs.gov/MOLA/MYD13Q1.005/'
 
 MODIS_TERRA_TILES = [
+    # central america
+    'h09v07',
     # south america
     'h10v08', 'h11v08', 'h12v08', 'h10v09', 'h11v09', 'h12v09',
     'h13v09', 'h14v09', 'h12v10', 'h13v10',
