@@ -57,3 +57,6 @@ if __name__ == '__main__':
             doy = date.strftime('%j')
             print date_ymd, '(doy=', doy, ') missing : ',\
                 ' '.join(missing_tiles)
+
+    print '\n\nYou can use rastercube/scripts/create_fake_hdf.py to create fake ' + \
+          'HDFs if those are missing from the MODIS archive\n'
