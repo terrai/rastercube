@@ -22,8 +22,7 @@ for tilename in ${TILES[@]}; do
     python scripts/create_ndvi_worldgrid.py \
         --tile=$tilename \
         --nworkers=10 \
-        --ndvi_grid_root=$WORLDGRID/ndvi \
-        --qa_grid_root=$WORLDGRID/qa \
+        --worldgrid=$WORLDGRID \
         --dates_csv=/home/terrai/data/1_manual/ndvi_dates.terra_aqua.csv \
         --frac_ndates=200 \
         --noconfirm > $logfname 2>&1
