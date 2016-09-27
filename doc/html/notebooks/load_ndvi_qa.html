@@ -88,7 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../examples.html#importing-a-new-tile-into-hdfs">2.1. Importing a new tile into HDFS</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../examples.html#example-notebooks">2.2. Example notebooks</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="load_ndvi_glcf.html">2.2.1. Loading two different jgrid worldgrids and reprojecting one on another</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.2. Loading NDVI and QA data</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">2.2.2. Loading NDVI and QA data</a></li>
 </ul>
 </li>
 </ul>
@@ -117,7 +117,7 @@
         <div class="rst-content">
           
 
- 
+
 
 
 
@@ -310,11 +310,11 @@ div.nboutput  > :nth-child(2).stderr {
 <h1>2.2.2. Loading NDVI and QA data<a class="headerlink" href="#Loading-NDVI-and-QA-data" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput nblast container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [1]:
+In [1]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cm</span>
@@ -331,11 +331,11 @@ div.nboutput  > :nth-child(2).stderr {
 </div>
 <div class="nbinput nblast container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [2]:
+In [2]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="c1">#WORLDGRID = os.path.join(os.environ[&#39;TERRAI_DATA&#39;], &#39;sv2455/jgrids/worldgrid/&#39;)</span>
+<span class="c1">#WORLDGRID = os.path.join(os.environ[&#39;TERRAI_DATA&#39;], &#39;sv2455/jgrids/worldgrid/&#39;)</span>
 <span class="n">WORLDGRID</span> <span class="o">=</span> <span class="s1">&#39;hdfs:///user/terrai/worldgrid&#39;</span>
 <span class="n">ndvi_header</span> <span class="o">=</span> <span class="n">jgrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">WORLDGRID</span> <span class="o">+</span> <span class="s1">&#39;/ndvi&#39;</span><span class="p">)</span>
 <span class="n">qa_header</span> <span class="o">=</span> <span class="n">jgrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">WORLDGRID</span> <span class="o">+</span> <span class="s1">&#39;/qa&#39;</span><span class="p">)</span>
@@ -346,11 +346,11 @@ div.nboutput  > :nth-child(2).stderr {
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
+In [3]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="nb">reload</span><span class="p">(</span><span class="n">jgrid_utils</span><span class="p">)</span>
+<span class="nb">reload</span><span class="p">(</span><span class="n">jgrid_utils</span><span class="p">)</span>
 <span class="n">ndvi_xy_from</span><span class="p">,</span> <span class="n">ndvi_data</span><span class="p">,</span> <span class="n">ndvi_mask</span><span class="p">,</span> <span class="n">qa_data</span><span class="p">,</span> <span class="n">qa_mask</span> <span class="o">=</span> \
     <span class="n">jgrid_utils</span><span class="o">.</span><span class="n">load_poly_latlng_from_multi_jgrids</span><span class="p">([</span><span class="n">ndvi_header</span><span class="p">,</span> <span class="n">qa_header</span><span class="p">],</span> <span class="n">poly</span><span class="p">,</span> <span class="n">progressbar</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
@@ -371,21 +371,21 @@ Total time elapsed: 00:00:12
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
+In [4]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">pl</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ndvi_data</span><span class="p">[:,:,</span><span class="mi">150</span><span class="p">])</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ndvi_data</span><span class="p">[:,:,</span><span class="mi">150</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>Out[4]:
+Out[4]:
 </pre></div>
 </div>
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.image.AxesImage at 0x7f4f9c7bd3d0&gt;
+&lt;matplotlib.image.AxesImage at 0x7f4f9c7bd3d0&gt;
 </pre></div>
 </div>
 </div>
@@ -398,11 +398,11 @@ Total time elapsed: 00:00:12
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [5]:
+In [5]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="c1"># Convert the uint16 qa to 0-1 float confidence</span>
+<span class="c1"># Convert the uint16 qa to 0-1 float confidence</span>
 <span class="n">qaconf</span> <span class="o">=</span> <span class="n">modis</span><span class="o">.</span><span class="n">qa_to_qaconf</span><span class="p">(</span><span class="n">qa_data</span><span class="p">)</span>
 <span class="k">print</span> <span class="n">qa_data</span><span class="o">.</span><span class="n">dtype</span>
 <span class="k">print</span> <span class="n">qaconf</span><span class="o">.</span><span class="n">dtype</span>
@@ -420,21 +420,21 @@ float32
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [6]:
+In [6]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">pl</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">qaconf</span><span class="p">[:,:,</span><span class="mi">100</span><span class="p">],</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span> <span class="n">pl</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">qaconf</span><span class="p">[:,:,</span><span class="mi">100</span><span class="p">],</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span> <span class="n">pl</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>Out[6]:
+Out[6]:
 </pre></div>
 </div>
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f4f991c1890&gt;
+&lt;matplotlib.colorbar.Colorbar at 0x7f4f991c1890&gt;
 </pre></div>
 </div>
 </div>
@@ -447,11 +447,11 @@ float32
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [7]:
+In [7]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">450</span>
+<span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">450</span>
 
 <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ndvi_data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
@@ -467,11 +467,11 @@ float32
 </div>
 <div class="nboutput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>Out[7]:
+Out[7]:
 </pre></div>
 </div>
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.text.Text at 0x7f4f990e4550&gt;
+&lt;matplotlib.text.Text at 0x7f4f990e4550&gt;
 </pre></div>
 </div>
 </div>

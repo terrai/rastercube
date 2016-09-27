@@ -2,13 +2,17 @@
 Examples
 ========
 
+.. warning::
+
+    Ensure you have read the :ref:`configuration` and :ref:`envvar` sections
+
 Importing a new tile into HDFS
 ==============================
 To import a new tile, you first want to download the HDF files for said tile.
 
-Edit rastercube/config.py
--------------------------
-The first step is to modify ``rastercube/config.py`` to add the tile name to
+Edit your configuration file
+----------------------------
+The first step is to modify your :ref:`configuration` file to add the tile name to
 ``MODIS_TERRA_TILES``.
 
 For example::

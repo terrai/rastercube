@@ -10,6 +10,36 @@ In addition, `rastercube` provides facility to process the data using Spark.
 
 All the geographical computations are handled by `gdal`.
 
+.. _envvar:
+
+Environment variables
+=====================
+
+Example::
+
+    export RASTERCUBE_TEST_DATA=$HOME/rastercube_testdata
+    export RASTERCUBE_DATA=$TERRAI_DATA
+    export RASTERCUBE_WORLDGRID=$TERRAI_WORLDGRID
+    export RASTERCUBE_CONFIG=$TERRAI_DATA/1_manual/rastercube_config.py
+
+
+.. _configuration:
+
+Configuration
+=============
+Rastercube's configuration options are defined in the ``rastercube.config``
+module. To override options, create a ``rastercube_config.py`` file on your
+file system and have the ``$RASTERCUBE_CONFIG`` environment variable point
+to it. For example::
+
+    export RASTERCUBE_CONFIG=$RASTERCUBE_DATA/1_manual/rastercube_config.py
+
+With ``rastercube_config.py`` containing::
+
+    MODIS_HTTP_USER="foo"
+    MODIS_HTTP_PASS="bar"
+
+
 Worldgrid
 =========
 A worldgrid is a (chunked) georeferenced nD (n >= 2) array covering the whole

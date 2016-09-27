@@ -87,7 +87,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../examples.html">2. Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../examples.html#importing-a-new-tile-into-hdfs">2.1. Importing a new tile into HDFS</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../examples.html#example-notebooks">2.2. Example notebooks</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.1. Loading two different jgrid worldgrids and reprojecting one on another</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="">2.2.1. Loading two different jgrid worldgrids and reprojecting one on another</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#Load-in-NDVI-projection">Load in NDVI projection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Load-in-GLCF-projection">Load in GLCF projection</a></li>
 </ul>
@@ -121,7 +121,7 @@
         <div class="rst-content">
           
 
- 
+
 
 
 
@@ -316,11 +316,11 @@ div.nboutput  > :nth-child(2).stderr {
 different projection/geotransform into the same reference.</p>
 <div class="nbinput nblast container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [1]:
+In [1]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cm</span>
 <span class="kn">import</span> <span class="nn">terrapy</span>
@@ -336,11 +336,11 @@ different projection/geotransform into the same reference.</p>
 </div>
 <div class="nbinput nblast container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [2]:
+In [2]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">glcf_header</span> <span class="o">=</span> <span class="n">jgrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;hdfs:///user/terrai/worldgrid/glcf/2004&#39;</span><span class="p">)</span>
+<span class="n">glcf_header</span> <span class="o">=</span> <span class="n">jgrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;hdfs:///user/terrai/worldgrid/glcf/2004&#39;</span><span class="p">)</span>
 <span class="n">ndvi_header</span> <span class="o">=</span> <span class="n">jgrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;hdfs:///user/terrai/worldgrid/ndvi&#39;</span><span class="p">)</span>
 <span class="n">poly</span> <span class="o">=</span> <span class="n">regions</span><span class="o">.</span><span class="n">polygon_for_region</span><span class="p">(</span><span class="s2">&quot;test_zones_1.h12v11_1&quot;</span><span class="p">)</span>
 </pre></div>
@@ -350,11 +350,11 @@ different projection/geotransform into the same reference.</p>
 <h2>Load in NDVI projection<a class="headerlink" href="#Load-in-NDVI-projection" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
+In [3]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="nb">reload</span><span class="p">(</span><span class="n">jgrid_utils</span><span class="p">)</span>
+<span class="nb">reload</span><span class="p">(</span><span class="n">jgrid_utils</span><span class="p">)</span>
 <span class="n">ndvi_xy_from</span><span class="p">,</span> <span class="n">ndvi_data</span><span class="p">,</span> <span class="n">ndvi_mask</span><span class="p">,</span> <span class="n">glcf_data</span><span class="p">,</span> <span class="n">glcf_mask</span> <span class="o">=</span> \
     <span class="n">jgrid_utils</span><span class="o">.</span><span class="n">load_poly_latlng_from_multi_jgrids</span><span class="p">([</span><span class="n">ndvi_header</span><span class="p">,</span> <span class="n">glcf_header</span><span class="p">],</span> <span class="n">poly</span><span class="p">)</span>
 </pre></div>
@@ -371,11 +371,11 @@ arr dtype :  uint8  =&gt; gdal dtype :  Byte
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
+In [4]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">glcf_mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
@@ -391,11 +391,11 @@ arr dtype :  uint8  =&gt; gdal dtype :  Byte
 </div>
 <div class="nboutput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>Out[4]:
+Out[4]:
 </pre></div>
 </div>
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.image.AxesImage at 0x7f3ba9eb1610&gt;
+&lt;matplotlib.image.AxesImage at 0x7f3ba9eb1610&gt;
 </pre></div>
 </div>
 </div>
@@ -418,11 +418,11 @@ arr dtype :  uint8  =&gt; gdal dtype :  Byte
 <h2>Load in GLCF projection<a class="headerlink" href="#Load-in-GLCF-projection" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [5]:
+In [5]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="nb">reload</span><span class="p">(</span><span class="n">jgrid_utils</span><span class="p">)</span>
+<span class="nb">reload</span><span class="p">(</span><span class="n">jgrid_utils</span><span class="p">)</span>
 <span class="n">glcf_xy_from</span><span class="p">,</span> <span class="n">glcf_data</span><span class="p">,</span> <span class="n">glcf_mask</span><span class="p">,</span> <span class="n">ndvi_data</span><span class="p">,</span> <span class="n">ndvi_mask</span><span class="p">,</span>  <span class="o">=</span> \
     <span class="n">jgrid_utils</span><span class="o">.</span><span class="n">load_poly_latlng_from_multi_jgrids</span><span class="p">([</span><span class="n">glcf_header</span><span class="p">,</span> <span class="n">ndvi_header</span><span class="p">],</span> <span class="n">poly</span><span class="p">)</span>
 </pre></div>
@@ -439,11 +439,11 @@ arr dtype :  uint8  =&gt; gdal dtype :  Byte
 </div>
 <div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [6]:
+In [6]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">glcf_mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
@@ -459,11 +459,11 @@ arr dtype :  uint8  =&gt; gdal dtype :  Byte
 </div>
 <div class="nboutput container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>Out[6]:
+Out[6]:
 </pre></div>
 </div>
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.image.AxesImage at 0x7f3ba9dbc710&gt;
+&lt;matplotlib.image.AxesImage at 0x7f3ba9dbc710&gt;
 </pre></div>
 </div>
 </div>
@@ -483,11 +483,11 @@ arr dtype :  uint8  =&gt; gdal dtype :  Byte
 </div>
 <div class="nbinput nblast container">
 <div class="highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+In [ ]:
 </pre></div>
 </div>
 <div class="highlight-ipython2"><div class="highlight"><pre>
-<span></span>
+
 </pre></div>
 </div>
 </div>

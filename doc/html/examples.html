@@ -83,9 +83,9 @@
             
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Examples</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">2. Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#importing-a-new-tile-into-hdfs">2.1. Importing a new tile into HDFS</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#edit-rastercube-config-py">2.1.1. Edit rastercube/config.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-your-configuration-file">2.1.1. Edit your configuration file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#run-ndvi-hdf-download-py">2.1.2. Run ndvi_hdf_download.py</a></li>
 </ul>
 </li>
@@ -120,7 +120,7 @@
         <div class="rst-content">
           
 
- 
+
 
 
 
@@ -178,19 +178,23 @@
 </style>
 <div class="section" id="examples">
 <h1>2. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Ensure you have read the <a class="reference internal" href="overview.html#configuration"><span>Configuration</span></a> and <a class="reference internal" href="overview.html#envvar"><span>Environment variables</span></a> sections</p>
+</div>
 <div class="section" id="importing-a-new-tile-into-hdfs">
 <h2>2.1. Importing a new tile into HDFS<a class="headerlink" href="#importing-a-new-tile-into-hdfs" title="Permalink to this headline">¶</a></h2>
 <p>To import a new tile, you first want to download the HDF files for said tile.</p>
-<div class="section" id="edit-rastercube-config-py">
-<h3>2.1.1. Edit rastercube/config.py<a class="headerlink" href="#edit-rastercube-config-py" title="Permalink to this headline">¶</a></h3>
-<p>The first step is to modify <code class="docutils literal"><span class="pre">rastercube/config.py</span></code> to add the tile name to
+<div class="section" id="edit-your-configuration-file">
+<h3>2.1.1. Edit your configuration file<a class="headerlink" href="#edit-your-configuration-file" title="Permalink to this headline">¶</a></h3>
+<p>The first step is to modify your <a class="reference internal" href="overview.html#configuration"><span>Configuration</span></a> file to add the tile name to
 <code class="docutils literal"><span class="pre">MODIS_TERRA_TILES</span></code>.</p>
 <p>For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MODIS_TERRA_TILES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="o">...</span>
-    <span class="c1"># central america</span>
-    <span class="n">h09v07</span><span class="p">,</span>
-    <span class="o">...</span>
+<div class="highlight-python"><div class="highlight"><pre>MODIS_TERRA_TILES = [
+    ...
+    # central america
+    h09v07,
+    ...
 </pre></div>
 </div>
 </div>
@@ -198,7 +202,7 @@
 <h3>2.1.2. Run ndvi_hdf_download.py<a class="headerlink" href="#run-ndvi-hdf-download-py" title="Permalink to this headline">¶</a></h3>
 <p>Now, run <code class="docutils literal"><span class="pre">ndvi_hdf_download.py</span></code> which will update the local cache of the
 MODIS tile listing and download the tabs specified in the config.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rastercube</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">ndvi_hdf_download</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-python"><div class="highlight"><pre>python rastercube/scripts/ndvi_hdf_download.py
 </pre></div>
 </div>
 </div>
