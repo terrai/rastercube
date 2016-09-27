@@ -1,8 +1,8 @@
 all:
-	sphinx-build -b html . _build
+	sphinx-build -b html . html
 
 watch:
-	sphinx-autobuild -p 9998 -b html . _build
+	sphinx-autobuild -p 9998 -b html . html
 
 clean:
 	@rm -rf _build

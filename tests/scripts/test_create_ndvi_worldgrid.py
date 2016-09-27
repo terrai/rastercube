@@ -34,8 +34,9 @@ class CreateNDVIWorldgridTest(test_utils.RasterCubeTest):
     def test_create_ndvi_worldgrid(self):
         script = os.path.join(test_utils.get_rastercube_dir(), 'scripts',
                               'create_ndvi_worldgrid.py')
-        ndvi_dir = os.path.join(self.tmpdir, 'ndvi')
-        qa_dir = os.path.join(self.tmpdir, 'qa')
+        worldgrid = self.tmpdir
+        ndvi_dir = os.path.join(worldgrid, 'ndvi')
+        qa_dir = os.path.join(worldgrid, 'qa')
         dates_csv = os.path.join(utils.get_data_dir(), '1_manual',
                                  'ndvi_dates.2.csv')
         tile = 'h29v07'
@@ -45,8 +46,7 @@ class CreateNDVIWorldgridTest(test_utils.RasterCubeTest):
             script,
             '--tile=%s' % tile,
             '--noconfirm',
-            '--ndvi_grid_root=%s' % ndvi_dir,
-            '--qa_grid_root=%s' % qa_dir,
+            '--worldgrid=%s' % worldgrid,
             '--frac_ndates=1',
             '--dates_csv=%s' % dates_csv
         ]
