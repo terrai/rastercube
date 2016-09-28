@@ -35,16 +35,30 @@ MODIS tile listing and download the tabs specified in the config.
 Run create_ndvi_worldgrid.py
 ----------------------------
 
-.. important::
+::
 
-    TODO
+  python rastercube/scripts/create_ndvi_worldgrid.py
+      --tile=h09v07
+      --worldgrid=hdfs:///user/terrai/worldgrid/
+      --dates_csv=$TERRAI_DATA/1_manual/ndvi_dates.terra_aqua.csv
+
 
 Updating the worldgrid when new dates are available
 ===================================================
 
-.. important::
+First, update your dates CSV::
 
-    TODO
+  python rastercube/scripts/ndvi_collect_dates.py
+    --tile=h09v07
+    --outfile=$TERRAI_DATA/1_manual/ndvi_dates.terra_aqua.csv
+
+
+And then, for each tile, run::
+
+  python rastercube/scripts/complete_ndvi_worldgrid.py
+      --tile=h09v07
+      --worldgrid=hdfs:///user/terrai/worldgrid/
+      --dates_csv=$TERRAI_DATA/1_manual/ndvi_dates.terra_aqua.csv
 
 
 Example notebooks
