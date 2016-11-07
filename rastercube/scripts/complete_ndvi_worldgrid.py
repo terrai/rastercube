@@ -25,7 +25,7 @@ import joblib
 parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
 
 parser.add_argument('--tile', type=str, required=True,
-                    help='tile name (e.g. h17v07)')
+                    help='tile name (e.g. h17v07, all)')
 parser.add_argument('--noconfirm', action='store_true',
                     help='Skip confirmation')
 parser.add_argument('--worldgrid', type=str, required=True,
@@ -135,7 +135,7 @@ def set_header_timestamps(header, new_dates_ms):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    tilename = args.tile
+    arg_tilename = args.tile
     modis_dir = utils.get_modis_hdf_dir()
     worldgrid = args.worldgrid
     ndvi_root = os.path.join(worldgrid, 'ndvi')
@@ -157,56 +157,68 @@ if __name__ == '__main__':
     header_ndates = len(ndvi_header.timestamps_ms)
     assert np.all(ndvi_header.timestamps_ms == dates_ms[:header_ndates])
 
-    ## -- Find the filename of the HDF file for this date and our tile
-    hdf_files = modis.ndvi_hdf_for_tile(tilename, modis_dir)
-    hdf_files = {ts:fname for (fname, ts) in hdf_files}
-
     # -- Update the headers with the new timestamps
     set_header_timestamps(ndvi_header, dates_ms)
     ndvi_header.save()
     set_header_timestamps(qa_header, dates_ms)
     qa_header.save()
 
-    # reload the headers
-    ndvi_header = jgrid.load(ndvi_root)
-    qa_header = jgrid.load(qa_root)
-    assert np.all(ndvi_header.timestamps_ms == dates_ms)
-    assert np.all(qa_header.timestamps_ms == dates_ms)
 
-    # -- Figure out the fractions we have to update
-    modgrid = grids.MODISGrid()
-    tile_h, tile_v = modis.parse_tilename(tilename)
-    fractions = modgrid.get_cells_for_tile(tile_h, tile_v)
-    assert np.all(ndvi_header.list_available_fracnums() == \
-                  qa_header.list_available_fracnums())
-    fractions = np.intersect1d(fractions,
-                               ndvi_header.list_available_fracnums())
-
-    print
-    print 'Will append the following :'
-    print 'NDVI grid root : %s' % ndvi_root
-    print 'QA grid root : %s' % qa_root
-    print 'tilename : %s' % tilename
-    print 'num fractions : %d' % len(fractions)
-    print 'nworkers : %s' % str(nworkers)
-    print
-
-    if len(fractions) == 0:
-        print 'No fractions to process - terminating'
-        sys.exit(0)
-
-    if not args.noconfirm:
-        if not utils.confirm(prompt='Proceed?', resp=True):
-            sys.exit(-1)
-
-    if nworkers is not None and nworkers > 1:
-        print 'Using joblib.Parallel with nworkers=%d' % nworkers
-        joblib.Parallel(n_jobs=nworkers)(
-            joblib.delayed(complete_frac)(frac_num, ndvi_root, qa_root,
-                tile_h, tile_v, hdf_files)
-            for frac_num in fractions
-        )
+    if arg_tilename == 'all':
+        import rastercube.config as config
+        tiles = config.MODIS_TERRA_TILES[16:]
     else:
-        for frac_num in fractions:
-            complete_frac(frac_num, ndvi_root, qa_root,
-                          tile_h, tile_v, hdf_files)
+        tiles = [arg_tilename]
+        
+
+    for tilename in tiles:
+        ## -- Find the filename of the HDF file for this date and our tile
+        hdf_files = modis.ndvi_hdf_for_tile(tilename, modis_dir)
+        hdf_files = {ts:fname for (fname, ts) in hdf_files}
+
+        # reload the headers
+        ndvi_header = jgrid.load(ndvi_root)
+        qa_header = jgrid.load(qa_root)
+        assert np.all(ndvi_header.timestamps_ms == dates_ms)
+        assert np.all(qa_header.timestamps_ms == dates_ms)
+
+        # -- Figure out the fractions we have to update
+        modgrid = grids.MODISGrid()
+        tile_h, tile_v = modis.parse_tilename(tilename)
+        fractions = modgrid.get_cells_for_tile(tile_h, tile_v)
+        assert np.all(ndvi_header.list_available_fracnums() == \
+                      qa_header.list_available_fracnums())
+        fractions = np.intersect1d(fractions,
+                                   ndvi_header.list_available_fracnums())
+
+        print
+        print 'Will append the following :'
+        print 'NDVI grid root : %s' % ndvi_root
+        print 'QA grid root : %s' % qa_root
+        print 'tilename : %s' % tilename
+        print 'num fractions : %d' % len(fractions)
+        print 'nworkers : %s' % str(nworkers)
+        print
+
+        if len(fractions) == 0:
+            print 'No fractions to process - terminating'
+            if arg_tilename == 'all':
+                continue
+            else:
+                sys.exit(0)
+
+        if not args.noconfirm:
+            if not utils.confirm(prompt='Proceed?', resp=True):
+                sys.exit(-1)
+
+        if nworkers is not None and nworkers > 1:
+            print 'Using joblib.Parallel with nworkers=%d' % nworkers
+            joblib.Parallel(n_jobs=nworkers)(
+                joblib.delayed(complete_frac)(frac_num, ndvi_root, qa_root,
+                    tile_h, tile_v, hdf_files)
+                for frac_num in fractions
+            )
+        else:
+            for frac_num in fractions:
+                complete_frac(frac_num, ndvi_root, qa_root,
+                              tile_h, tile_v, hdf_files)
