@@ -1,0 +1,29 @@
+- name: Download anaconda
+  get_url:
+    url=https://repo.continuum.io/archive/Anaconda2-4.2.0-Linux-x86_64.sh
+    dest={{home}}/anaconda2-4.2.0.sh
+
+- name: Install anaconda
+  command: "bash {{home}}/anaconda2-4.2.0.sh -b -p {{home}}/anaconda creates={{home}}/anaconda"
+
+- name: Install numpy
+  conda: name=numpy state=present version=1.11.2
+
+- name: Install gdal
+  conda: name=gdal state=present version=2.1.0
+
+- name: Install hdf5
+  conda: name=hdf5 state=present version=1.8.15.1
+
+- name: Install pep8
+  conda: name=pep8 state=present
+
+- name: Install pil
+  conda: name=pil state=present
+
+- name: Install entrypoints
+  conda: name=entrypoints state=present
+
+- pip: name=hdfs version=2.0.13
+
+- pip: name=pyprind version=2.9.8

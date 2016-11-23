@@ -1,0 +1,24 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+export PATH={{java_folder}}/bin:$PATH
+export JAVA_HOME={{java_folder}}
+# If you change this, also change hadoop_home ansible var
+# in roles/hadoop/vars/main.yl
+export HADOOP_HOME=$HOME/hadoop/hadoop/
+export SPARK_HOME=$HOME/hadoop/spark/
+export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native:$LD_LIBRARY_PATH
+
+export PATH=$HOME/anaconda/bin:$PATH
+export GDAL_DATA=$HOME/anaconda/share/gdal
+export PYTHONPATH=$SPARK_HOME/python/:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH
+
+export HADOOP_NAMENODE_OPTS=-Xmx2g
+
+eval `ssh-agent -s` > /dev/null
+
+PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '

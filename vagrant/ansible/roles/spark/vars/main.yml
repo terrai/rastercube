@@ -1,0 +1,2 @@
+spark_home: "{{home}}/hadoop/spark"
+spark_master: "{{groups['hadoop-master'][0]}}"

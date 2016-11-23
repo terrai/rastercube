@@ -1,0 +1,8 @@
+- hosts: all
+  vars:
+    home: "{{ ansible_env.HOME}}"
+  roles:
+  - common
+  - python
+  - hadoop
+  - spark

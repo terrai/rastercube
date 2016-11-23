@@ -1,0 +1,12 @@
+# https://gist.github.com/gbirke/8314571
+# http://stackoverflow.com/questions/10268583/downloading-java-jdk-on-linux-via-wget-is-shown-license-page-instead
+- include_vars: java.yml
+
+- name: Download java
+  command: 'wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" {{java_download}} -O {{java_archive}} creates={{java_archive}}'
+
+- name: Create jdk directory
+  file: path={{java_folder}} state=directory
+
+- name: Extract java archive
+  command: 'tar -xzf {{java_archive}} -C {{java_folder}} --strip-components=1 creates={{java_folder}}/bin/java'
