@@ -5,7 +5,7 @@ Example invocation::
 
     python rastercube/scripts/complete_ndvi_worldgrid.py
         --tile=h10v09
-        --worldgrid=hdfs:///user/test/
+        --worldgrid=hdfs:///user/terrai/worldgrid
         --dates_csv=$RASTERCUBE_TEST_DATA/1_manual/ndvi_dates.3.csv
 """
 from __future__ import division
@@ -19,6 +19,7 @@ import rastercube.utils as utils
 import rastercube.datasources.modis as modis
 import rastercube.jgrid as jgrid
 import rastercube.worldgrid.grids as grids
+import rastercube.io as io
 import joblib
 
 
@@ -75,20 +76,21 @@ def complete_frac(frac_num, ndvi_root, qa_root, tile_h, tile_v, hdf_files):
     for frac_d in range(d_from, d_to)[::-1]:
         frac_id = (frac_num, frac_d)
         fname = ndvi_header.frac_fname(frac_id)
-        if os.path.exists(fname):
+        if io.fs_exists(fname):
             break
+
+    # Read the data of the most recent fraction in HDFS
     ndvi = jgrid.read_frac(ndvi_header.frac_fname(frac_id))
     qa = jgrid.read_frac(qa_header.frac_fname(frac_id))
+
     assert np.all(ndvi.shape == qa.shape)
 
-    most_recent_d = frac_d
+    # Compute the index of the last date in HDFS
     most_recent_t = frac_d * ndvi_header.frac_ndates + ndvi.shape[2]
 
-    i_range, j_range = modgrid.get_cell_indices_in_tile(
-        frac_num, tile_h, tile_v)
+    i_range, j_range = modgrid.get_cell_indices_in_tile(frac_num, tile_h, tile_v)
 
     # At this point, we just have to complete with the missing dates
-    frac_d = most_recent_d
     for t in range(most_recent_t, len(ndvi_header.timestamps_ms)):
         ts = ndvi_header.timestamps_ms[t]
         fname = hdf_files[ts]
@@ -107,10 +109,11 @@ def complete_frac(frac_num, ndvi_root, qa_root, tile_h, tile_v, hdf_files):
             qa = new_qa[:,:,None]
 
         if ndvi.shape[2] == ndvi_header.frac_ndates:
+            # Write a complete fraction
             frac_id = (frac_num, frac_d)
             ndvi_header.write_frac(frac_id, ndvi)
             qa_header.write_frac(frac_id, qa)
-
+            # Prepare variables for a new fraction
             frac_d += 1
             ndvi = None
             qa = None
@@ -166,7 +169,7 @@ if __name__ == '__main__':
 
     if arg_tilename == 'all':
         import rastercube.config as config
-        tiles = config.MODIS_TERRA_TILES[16:]
+        tiles = config.MODIS_TERRA_TILES
     else:
         tiles = [arg_tilename]
         
@@ -220,5 +223,5 @@ if __name__ == '__main__':
             )
         else:
             for frac_num in fractions:
-                complete_frac(frac_num, ndvi_root, qa_root,
-                              tile_h, tile_v, hdf_files)
+                complete_frac(frac_num, ndvi_root, qa_root, tile_h, tile_v, hdf_files)
+
