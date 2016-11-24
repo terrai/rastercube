@@ -1,0 +1,2 @@
+hadoop_home: "{{home}}/hadoop/hadoop"
+namenode_host: "{{groups['hadoop-master'][0]}}"

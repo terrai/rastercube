@@ -1,0 +1,2 @@
+{{ hostvars['master']['ansible_ssh_host'] }} master
+{{ hostvars['slave']['ansible_ssh_host'] }} slave

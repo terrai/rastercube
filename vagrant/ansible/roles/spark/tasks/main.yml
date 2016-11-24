@@ -1,0 +1,28 @@
+- name: Ensure spark directory exists
+  file: path={{spark_home}} state=directory
+
+- name: Download spark
+  get_url:
+    url=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.2-bin-hadoop2.7.tgz
+    dest={{home}}/spark-2.0.2.tar.gz
+
+- name: Decompress spark
+  command: "tar -xzf {{home}}/spark-2.0.2.tar.gz -C {{spark_home}} --strip-components=1 creates={{spark_home}}/bin"
+
+- name: Copy spark spark-defaults.conf
+  template:
+    src=spark-defaults.conf
+    dest={{spark_home}}/conf/spark-defaults.conf
+
+- name: Copy hadoop spark-env.sh
+  template:
+    src=spark-env.sh
+    dest={{spark_home}}/conf/spark-env.sh
+
+- name: Copy hadoop slaves
+  template:
+    src=slaves
+    dest={{spark_home}}/conf/slaves
+
+- name: Ensure spark_events exists
+  file: path={{spark_home}}/spark_events state=directory

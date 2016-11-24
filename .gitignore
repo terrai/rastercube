@@ -17,3 +17,5 @@ dist/
 /rastercube/datasources/modis_qa.c
 /rastercube/datasources/landsat8_qa.c
 /docker/rastercube.tar.bz2
+vagrant/ansible/roles/common/files/ssh_key*
+vagrant/.vagrant

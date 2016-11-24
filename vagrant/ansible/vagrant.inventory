@@ -1,0 +1,20 @@
+# This is the inventory file for vagrant dev provisioning. See
+# https://www.vagrantup.com/docs/provisioning/ansible_intro.html#Vagrantfile
+[targets]
+master ansible_ssh_host=192.168.50.2 ansible_ssh_port=22 ansible_ssh_user='vagrant'
+slave ansible_ssh_host=192.168.50.3 ansible_ssh_port=22 ansible_ssh_user='vagrant'
+
+[hadoop-master]
+master
+
+[hadoop-slaves]
+master
+slave
+
+[hadoop:children]
+hadoop-master
+hadoop-slaves
+
+[hadoop:vars]
+namenode_dir=/home/vagrant/data/hdfs/namenode
+datanode_dir=/home/vagrant/data/hdfs/datanode

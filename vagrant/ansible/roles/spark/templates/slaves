@@ -1,0 +1,3 @@
+{% for host in groups['hadoop-slaves'] %}
+{{host}}
+{% endfor %}

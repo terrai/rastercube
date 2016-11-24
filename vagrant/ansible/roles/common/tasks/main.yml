@@ -1,0 +1,33 @@
+# Setup /etc/hosts so our servers can talk to each other using 'master' and
+# 'slave' as hostnames
+- name: Ensure /etc/hosts exists
+  sudo: yes
+  template:
+    src=hosts
+    dest=/etc/hosts
+
+# Setup the ssh key so hadoop can login passwordless on the other nodes
+- name: Ensures ~/.ssh exists
+  file: path={{home}}/.ssh state=directory
+
+- name: Setup ~/.ssh/config
+  copy: src=ssh_config dest={{home}}/.ssh/config mode=0600
+
+- name: Setup ssh keys private key
+  copy: src=ssh_key dest={{home}}/.ssh/ssh_key mode=0600
+
+- name: Setup ssh keys public key
+  copy: src=ssh_key.pub dest={{home}}/.ssh/ssh_key.pub
+
+- name: Add terrai-ssh key to authorized_keys
+  authorized_key: user={{ ansible_ssh_user }} key="{{ item }}"
+  with_file:
+    - ssh_key.pub
+
+- include: java.yml
+
+- name: setup bashrc
+  template:
+    src=bashrc
+    dest={{home}}/.bashrc
+

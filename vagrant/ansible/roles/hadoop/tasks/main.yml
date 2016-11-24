@@ -1,0 +1,50 @@
+- name: Ensure hadoop directory exists
+  file: path={{hadoop_home}} state=directory
+
+- name: Download hadoop
+  get_url:
+    url=https://www.apache.org/dist/hadoop/core/hadoop-2.7.3/hadoop-2.7.3.tar.gz
+    dest={{home}}/hadoop-2.7.3.tar.gz
+    validate_certs=False
+
+- name: Decompress hadoop
+  command: "tar -xzf {{home}}/hadoop-2.7.3.tar.gz -C {{hadoop_home}} --strip-components=1 creates={{hadoop_home}}/bin"
+
+- name: Copy hadoop core-site.xml
+  template:
+    src=core-site.xml
+    dest={{hadoop_home}}/etc/hadoop/core-site.xml
+
+- name: Copy hadoop hdfs-site.xml
+  template:
+    src=hdfs-site.xml
+    dest={{hadoop_home}}/etc/hadoop/hdfs-site.xml
+
+- name: Copy hadoop slaves
+  template:
+    src=slaves
+    dest={{hadoop_home}}/etc/hadoop/slaves
+
+- name: Ensure hadoop datanode directory exists
+  file: path={{datanode_dir}} state=directory
+
+- name: Ensure hadoop namenode directory exists
+  file: path={{namenode_dir}} state=directory
+  when: "'hadoop-master' in group_names"
+
+# For hadoop-native
+- name: Install libsnappy
+  apt: name=libsnappy-dev state=present
+  sudo: yes
+
+- name: Install libssl-dev
+  apt: name=libssl-dev state=present
+  sudo: yes
+
+- name: Install libbz2-dev
+  apt: name=libbz2-dev state=present
+  sudo: yes
+
+- name: Install bzip2
+  apt: name=bzip2 state=present
+  sudo: yes

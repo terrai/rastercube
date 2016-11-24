@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.define "master" do |master|
+    master.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "4096"
+    end
+    # Note to self : Vagrant requires eth0 to be a NAT interface and will
+    # automatically enable port forwarding for ssh. If you set ssh.port=22,
+    # it won't be able to connect to the machine through the forwarded port
+    # and it will fail.
+    master.vm.hostname = "master.vagrant.local"
+    master.vm.network "private_network", ip:"192.168.50.2"
+  end
+
+  config.vm.define "slave" do |slave|
+    slave.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+    end
+    slave.vm.hostname = "slave.vagrant.local"
+    slave.vm.network "private_network", ip:"192.168.50.3"
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    # See https://www.vagrantup.com/docs/provisioning/ansible_intro.html
+    ansible.inventory_path = "ansible/vagrant.inventory"
+    # The vagrant generated ansible inventory file is in
+    #   .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory
+    #ansible.groups = {
+      #"hadoop-master" => ["master"],
+      #"hadoop-slaves" => ["slave"],
+      #"hadoop:children" => ["hadoop-master", "hadoop-slaves"]
+    #}
+    ansible.playbook = "ansible/rastercube.yml"
+    #ansible.verbose = 'v'
+  end
+end

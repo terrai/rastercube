@@ -1,0 +1,4 @@
+java_download: http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.tar.gz
+java_name: jdk-8u65
+java_archive: "{{home}}/{{java_name}}.tar.gz"
+java_folder: "{{home}}/jdk"
