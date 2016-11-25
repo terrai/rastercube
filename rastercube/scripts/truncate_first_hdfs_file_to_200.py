@@ -29,14 +29,15 @@ parser.add_argument('--worldgrid', type=str, required=True,
                     help='worldgrid root')
 parser.add_argument('--nworkers', type=int, default=None,
                     help='Number of workers (by default all)')
+parser.add_argument('--fraction', type=int, default=None,
+                    help='Fraction number (by default all)')
+
 
 def truncate_frac(frac_num, ndvi_root, qa_root):
     """
     Given a frac_num, will truncate the first hdfs file to have a size of
     (frac_width, frac_height, frac_ndates) which should correspond to
     (400, 400, 200)
-    
-
     """
     _start = time.time()
     ndvi_header = jgrid.load(ndvi_root)
@@ -44,9 +45,15 @@ def truncate_frac(frac_num, ndvi_root, qa_root):
 
     frac_d = 0
     frac_id = (frac_num, frac_d)
-    ndvi = jgrid.read_frac(ndvi_header.frac_fname(frac_id))
-    qa = jgrid.read_frac(qa_header.frac_fname(frac_id))
 
+    try:
+        ndvi = jgrid.read_frac(ndvi_header.frac_fname(frac_id))
+        qa = jgrid.read_frac(qa_header.frac_fname(frac_id))
+    except ValueError:
+        print 'Fraction', frac_num, 'is corrupted!'
+        print 'Solve the problem for frac_num:', frac_num, 'frac_d:', frac_d, 'and execute the script again
+        return
+    
     # At this point, we just have to truncate the array
     if ndvi is not None:
         if ndvi.shape[2] > ndvi_header.frac_ndates:
@@ -76,30 +83,42 @@ if __name__ == '__main__':
     ndvi_root = os.path.join(worldgrid, 'ndvi')
     qa_root = os.path.join(worldgrid, 'qa')
     nworkers = args.nworkers
+    fraction = args.fraction
 
     assert jgrid.Header.exists(ndvi_root)
 
+    print 'Reading headers from HDFS...'
     ndvi_header = jgrid.load(ndvi_root)
     qa_header = jgrid.load(qa_root)
 
     assert np.all(ndvi_header.timestamps_ms == qa_header.timestamps_ms)
 
     # -- Figure out the fractions we have to update
-    assert np.all(ndvi_header.list_available_fracnums() == \
-                  qa_header.list_available_fracnums())
+    print 'Looking for available fractions in HDFS...'
     fractions = ndvi_header.list_available_fracnums()
-
+    
     if len(fractions) == 0:
         print 'No fractions to process - terminating'
         sys.exit(0)
 
-    if nworkers is not None and nworkers > 1:
-        print 'Using joblib.Parallel with nworkers=%d' % nworkers
-        joblib.Parallel(n_jobs=nworkers)(
-            joblib.delayed(truncate_frac)(frac_num, ndvi_root, qa_root)
-            for frac_num in fractions
-        )
-    else:
-        for frac_num in fractions:
-            truncate_frac(frac_num, ndvi_root, qa_root)
+    assert np.all(fractions == qa_header.list_available_fracnums())
 
+    if fraction is None:
+        # Launch the process
+        if nworkers is not None and nworkers > 1:
+            print 'Using joblib.Parallel with nworkers=%d' % nworkers
+            joblib.Parallel(n_jobs=nworkers)(
+                joblib.delayed(truncate_frac)(frac_num, ndvi_root, qa_root)
+                for frac_num in fractions
+            )
+        else:
+            for frac_num in fractions:
+                truncate_frac(frac_num, ndvi_root, qa_root)
+    else:
+        # Check if the fraction proposed by the user is in the set of available fractions
+        if np.sum(np.array(fractions) == fraction) == 1:
+            truncate_frac(fraction, ndvi_root, qa_root)
+        else:
+            print 'Fraction', fraction, 'is not available in HDFS'
+    
+    
