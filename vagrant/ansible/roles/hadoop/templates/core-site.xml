@@ -19,6 +19,6 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://{{namenode_host}}:9000</value>
+    <value>hdfs://{{namenode_ip}}:9000</value>
   </property>
 </configuration>

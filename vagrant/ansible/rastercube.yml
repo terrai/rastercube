@@ -1,6 +1,8 @@
 - hosts: all
   vars:
     home: "{{ ansible_env.HOME}}"
+    hadoop_master_fqdn: "{{ hostvars[groups['hadoop-master'][0]]['fqdn'] }}"
+    hadoop_master_ip : "{{ hostvars[groups['hadoop-master'][0]]['ansible_ssh_host'] }}"
   roles:
   - common
   - python

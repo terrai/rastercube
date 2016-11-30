@@ -21,22 +21,6 @@
     <name>dfs.replication</name>
     <value>1</value>
   </property>
-  <!--<property>-->
-  <!--  <name>dfs.namenode.rpc-bind-host</name>-->
-  <!--  <value>{{namenode_host}}</value>-->
-  <!--</property>-->
-  <!--<property>-->
-  <!--  <name>dfs.namenode.servicerpc-bind-host</name>-->
-  <!--  <value>{{namenode_host}}</value>-->
-  <!--</property>-->
-  <!--<property>-->
-  <!--  <name>dfs.namenode.http-bind-host</name>-->
-  <!--  <value>{{namenode_host}}</value>-->
-  <!--</property>-->
-  <!--<property>-->
-  <!--  <name>dfs.namenode.https-bind-host</name>-->
-  <!--  <value>{{namenode_host}}</value>-->
-  <!--</property>-->
   <property>
     <name>dfs.namenode.name.dir</name>
     <value>file://{{namenode_dir}}</value>
@@ -59,10 +43,4 @@
     <name>dfs.datanode.du.reserved</name>
     <value>1073741824</value> <!-- 1 GB -->
   </property>
-
-  <!-- Manually specify datanode ips otherwise spark will panic -->
-  <!--<property>
-    <name>dfs.datanode.address</name>
-    <value>10.192.75.174:50010</value>
-  </property>-->
 </configuration>
