@@ -13,7 +13,7 @@ def master_ip():
 def hdfs_client():
     # TODO: Configure from env
     return InsecureClient('http://%s:50070' % master_ip(),
-                          user='terrai')
+                          user=config.HDFS_USER)
 
 
 def hdfs_host(with_port=False):

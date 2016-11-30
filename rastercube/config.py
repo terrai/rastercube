@@ -11,6 +11,7 @@ For example in your bashrc add::
 import os
 
 HDFS_MASTER = 'IICT-SV2455.lan.iict.ch'
+HDFS_USER = 'terrai'
 SPARK_MASTER = os.environ.get('SPARK_MASTER',
                               'spark://iict-sv2455.lan.iict.ch:7077')
 
