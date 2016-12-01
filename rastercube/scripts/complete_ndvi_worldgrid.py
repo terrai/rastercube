@@ -192,22 +192,20 @@ if __name__ == '__main__':
         print 'All fractions selected'
         fractions = ndvi_header.list_available_fracnums()
     else:
-        if tilename not in tiles:
-            print 'Error. The tile requested is not in the list of configured tiles'
-            sys.exit(0)
-            
         tiles = [tilename]
         print 'Selecting fractions of tile', tilename, '...'
         # -- Figure out the fractions we have to update
         t_h, t_v = modis.parse_tilename(tilename)
         fractions_tile = modgrid.get_cells_for_tile(t_h, t_v)
+        assert np.all(ndvi_header.list_available_fracnums() == \
+                      qa_header.list_available_fracnums())
         fractions = np.intersect1d(fractions_tile,
                                    ndvi_header.list_available_fracnums())
-        
+
     if len(fractions) == 0:
         print 'No fractions to process... Terminating'
         sys.exit(0)
-                
+
     print
     print 'Will append the following :'
     print 'NDVI grid root : %s' % ndvi_root
