@@ -3,6 +3,7 @@ IO helper functions that transparently deal with both loca files (fs://) and
 HDFS files (hdfs://)
 """
 import os
+import shutil
 import numpy as np
 import rastercube.utils as utils
 import rastercube.hadoop.common as terrahdfs
@@ -77,6 +78,29 @@ def fs_read(fname, hdfs_client=None):
             return blob
     raise IOError("Error reading %s" % fname)
 
+def fs_delete(path, hdfs_client=None, recursive=False):
+    """
+    Delete a local (fs://) or HDFS(hdfs://) file or directory, possibly
+    recursively
+    """
+    if path.startswith('hdfs://'):
+        path = strip_uri_proto(path, 'hdfs://')
+        assert len(path) > 0
+        assert path != '/'
+        if hdfs_client is None:
+            hdfs_client = terrahdfs.hdfs_client()
+        hdfs_client.delete(path, recursive=recursive)
+    else:
+        path = strip_uri_proto(path, 'fs://')
+        assert len(path) > 0
+        assert path != '/'
+        if recursive == False:
+            if os.path.isdir(path):
+                os.rmdir(path)
+            else:
+                os.remove(path)
+        else:
+            shutil.rmtree(path)
 
 def fs_exists(fname, hdfs_client=None):
     """
