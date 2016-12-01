@@ -101,17 +101,6 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
 
         new_ndvi, new_qa = read_ndvi_qa(fname, i_range, j_range)
 
-        if ndvi is not None:
-            # TODO: If we end up completing multiple dates, we could preallocate
-            # But for now, this is unlikely (we'll complete with the most
-            # recent data)
-            ndvi = np.concatenate([ndvi, new_ndvi[:,:,None]], axis=2)
-            qa = np.concatenate([qa, new_qa[:,:,None]], axis=2)
-        else:
-            # start new fraction
-            ndvi = new_ndvi[:,:,None]
-            qa = new_qa[:,:,None]
-
         if ndvi.shape[2] == ndvi_header.frac_ndates:
             # Write a complete fraction
             frac_id = (frac_num, frac_d)
@@ -119,19 +108,26 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
             qa_header.write_frac(frac_id, qa)
             # Prepare variables for a new fraction
             frac_d += 1
-            ndvi = None
-            qa = None
+            ndvi = new_ndvi[:,:,None]
+            qa = new_qa[:,:,None]
+        else:
+            # TODO: If we end up completing multiple dates, we could preallocate
+            # But for now, this is unlikely (we'll complete with the most
+            # recent data)
+            ndvi = np.concatenate([ndvi, new_ndvi[:,:,None]], axis=2)
+            qa = np.concatenate([qa, new_qa[:,:,None]], axis=2)
+
+        assert np.all(ndvi.shape == qa.shape)
 
     # Write last incomplete fraction
-    if ndvi is not None:
-        frac_id = (frac_num, frac_d)
-        ndvi_header.write_frac(frac_id, ndvi)
-        qa_header.write_frac(frac_id, qa)
+    frac_id = (frac_num, frac_d)
+    ndvi_header.write_frac(frac_id, ndvi)
+    qa_header.write_frac(frac_id, qa)
 
     print 'Processed %d, appended %d dates, took %.02f [s]' % (frac_num,
           len(ndvi_header.timestamps_ms) - most_recent_t,
           time.time() - _start)
-          
+
     sys.stdout.flush()
 
 
