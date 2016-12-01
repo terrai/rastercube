@@ -77,6 +77,3 @@ def test_create_ndvi_worldgrid(tempdir):
     # Verify that the jgrid ndvi and the HDF ndvi store the same values
     assert_array_equal(hdf_ndvi, ndvi[:,:,1])
     assert_array_equal(hdf_qa, qa[:,:,1])
-
-if __name__ == '__main__':
-    pytest.main()

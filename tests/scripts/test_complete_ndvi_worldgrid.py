@@ -82,7 +82,7 @@ def test_complete_ndvi_worldgrid(tempdir):
             # speed things up
             '--test_limit_fractions=2'
         ]
-        output = subprocess.check_output(cmd)
+        subprocess.check_call(cmd)
 
     def complete(rootdir, dates_csv):
         print 'Completing %s' % rootdir
@@ -94,7 +94,7 @@ def test_complete_ndvi_worldgrid(tempdir):
             '--worldgrid=%s' % rootdir,
             '--dates_csv=%s' % dates_csv
         ]
-        output = subprocess.check_output(cmd)
+        subprocess.check_call(cmd)
 
     roots = [os.path.join(tempdir, 'grid%d' % n) for n in range(5)]
 
@@ -118,6 +118,3 @@ def test_complete_ndvi_worldgrid(tempdir):
         for dsname in ['ndvi', 'qa']:
             assert_grids_same(os.path.join(roots[0], dsname),
                               os.path.join(roots[i], dsname))
-
-if __name__ == '__main__':
-    pytest.main()
