@@ -56,7 +56,7 @@ def read_ndvi_qa(hdf_file, i_range, j_range):
     return ndvi, qa
 
 
-def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_filename):
+def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileindex):
     """
     Given a frac_num, will make sure it contains data for all dates in
     ndvi_header.timestamps_ms
@@ -68,11 +68,11 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_filename
     modgrid = grids.MODISGrid()
     ndvi_header = jgrid.load(ndvi_root)
     qa_header = jgrid.load(qa_root)
-    
+
     tilename = frac_tilename[frac_num]
     tile_h, tile_v = modis.parse_tilename(tilename)
-    hdf_files = tilename_filename[tilename]
-    
+    hdf_files = tilename_fileindex[tilename]
+
     d_from = 0
     d_to = ndvi_header.shape[2] // ndvi_header.frac_ndates + 1
 
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     if not args.noconfirm:
         if not utils.confirm(prompt='Proceed?', resp=True):
             sys.exit(0)
-            
+
     print 'Building dictionary of fraction:tilename...'
     # Build a dictionary frac_num:tilename
     frac_tilename = {}
@@ -227,24 +227,27 @@ if __name__ == '__main__':
         for f_n in modgrid.get_cells_for_tile(h, v):
             frac_tilename[f_n] = t_n
 
-    print 'Building dictionary of tilename:HDF_files...'
+    print 'Building dict of dict of tilename->file index'
     # Find MODIS files for every tile
-    tilename_filename = {}
+    # This builds a dict of dict that maps each tilename to a dict of
+    # (timestamp, filename) like
+    # {'h29v07' : {950832000000: 'date1.hdf', 952214400000: 'date2.hdf'}}
+    tilename_fileindex = {}
     for t_n in tiles:
         hdf_f = modis.ndvi_hdf_for_tile(t_n, modis_dir)
         hdf_f = {ts:fname for (fname, ts) in hdf_f}
-        tilename_filename[t_n] = hdf_f
+        tilename_fileindex[t_n] = hdf_f
 
     # Launch the process
     if nworkers is not None and nworkers > 1:
         print 'Using joblib.Parallel with nworkers=%d' % nworkers
         joblib.Parallel(n_jobs=nworkers)(
             joblib.delayed(complete_frac)(frac_num, ndvi_root, qa_root,
-                                          frac_tilename, tilename_filename)
+                                          frac_tilename, tilename_fileindex)
             for frac_num in fractions
         )
     else:
         for frac_num in fractions:
             complete_frac(frac_num, ndvi_root, qa_root,
-                          frac_tilename, tilename_filename)
+                          frac_tilename, tilename_fileindex)
 
