@@ -1,8 +1,10 @@
 # This is the inventory file for vagrant dev provisioning. See
 # https://www.vagrantup.com/docs/provisioning/ansible_intro.html#Vagrantfile
+
+# fqdn is the full DNS name, used by hadoop
 [targets]
-master ansible_ssh_host=192.168.50.2 ansible_ssh_port=22 ansible_ssh_user='vagrant'
-slave ansible_ssh_host=192.168.50.3 ansible_ssh_port=22 ansible_ssh_user='vagrant'
+master ansible_ssh_host=192.168.50.2 ansible_ssh_port=22 ansible_ssh_user='vagrant' fqdn=master.vagrant.local
+slave ansible_ssh_host=192.168.50.3 ansible_ssh_port=22 ansible_ssh_user='vagrant' fqdn=slave.vagrant.local
 
 [hadoop-master]
 master

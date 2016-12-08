@@ -6,6 +6,12 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
+  # This require the vagrant landrush plugin to enable DNS (hadoop requires
+  # DNS to function)
+  # Install with
+  #   vagrant plugin install landrush
+  config.landrush.enabled = true
+  config.landrush.tld = 'vagrant.local'
   config.vm.box = "ubuntu/trusty64"
   config.vm.define "master" do |master|
     master.vm.provider "virtualbox" do |vb|

@@ -56,7 +56,7 @@ def read_ndvi_qa(hdf_file, i_range, j_range):
     return ndvi, qa
 
 
-def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_filename):
+def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileindex):
     """
     Given a frac_num, will make sure it contains data for all dates in
     ndvi_header.timestamps_ms
@@ -68,11 +68,11 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_filename
     modgrid = grids.MODISGrid()
     ndvi_header = jgrid.load(ndvi_root)
     qa_header = jgrid.load(qa_root)
-    
+
     tilename = frac_tilename[frac_num]
     tile_h, tile_v = modis.parse_tilename(tilename)
-    hdf_files = tilename_filename[tilename]
-    
+    hdf_files = tilename_fileindex[tilename]
+
     d_from = 0
     d_to = ndvi_header.shape[2] // ndvi_header.frac_ndates + 1
 
@@ -101,17 +101,6 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_filename
 
         new_ndvi, new_qa = read_ndvi_qa(fname, i_range, j_range)
 
-        if ndvi is not None:
-            # TODO: If we end up completing multiple dates, we could preallocate
-            # But for now, this is unlikely (we'll complete with the most
-            # recent data)
-            ndvi = np.concatenate([ndvi, new_ndvi[:,:,None]], axis=2)
-            qa = np.concatenate([qa, new_qa[:,:,None]], axis=2)
-        else:
-            # start new fraction
-            ndvi = new_ndvi[:,:,None]
-            qa = new_qa[:,:,None]
-
         if ndvi.shape[2] == ndvi_header.frac_ndates:
             # Write a complete fraction
             frac_id = (frac_num, frac_d)
@@ -119,19 +108,26 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_filename
             qa_header.write_frac(frac_id, qa)
             # Prepare variables for a new fraction
             frac_d += 1
-            ndvi = None
-            qa = None
+            ndvi = new_ndvi[:,:,None]
+            qa = new_qa[:,:,None]
+        else:
+            # TODO: If we end up completing multiple dates, we could preallocate
+            # But for now, this is unlikely (we'll complete with the most
+            # recent data)
+            ndvi = np.concatenate([ndvi, new_ndvi[:,:,None]], axis=2)
+            qa = np.concatenate([qa, new_qa[:,:,None]], axis=2)
+
+        assert np.all(ndvi.shape == qa.shape)
 
     # Write last incomplete fraction
-    if ndvi is not None:
-        frac_id = (frac_num, frac_d)
-        ndvi_header.write_frac(frac_id, ndvi)
-        qa_header.write_frac(frac_id, qa)
+    frac_id = (frac_num, frac_d)
+    ndvi_header.write_frac(frac_id, ndvi)
+    qa_header.write_frac(frac_id, qa)
 
     print 'Processed %d, appended %d dates, took %.02f [s]' % (frac_num,
           len(ndvi_header.timestamps_ms) - most_recent_t,
           time.time() - _start)
-          
+
     sys.stdout.flush()
 
 
@@ -192,22 +188,20 @@ if __name__ == '__main__':
         print 'All fractions selected'
         fractions = ndvi_header.list_available_fracnums()
     else:
-        if tilename not in tiles:
-            print 'Error. The tile requested is not in the list of configured tiles'
-            sys.exit(0)
-            
         tiles = [tilename]
         print 'Selecting fractions of tile', tilename, '...'
         # -- Figure out the fractions we have to update
         t_h, t_v = modis.parse_tilename(tilename)
         fractions_tile = modgrid.get_cells_for_tile(t_h, t_v)
+        assert np.all(ndvi_header.list_available_fracnums() == \
+                      qa_header.list_available_fracnums())
         fractions = np.intersect1d(fractions_tile,
                                    ndvi_header.list_available_fracnums())
-        
+
     if len(fractions) == 0:
         print 'No fractions to process... Terminating'
         sys.exit(0)
-                
+
     print
     print 'Will append the following :'
     print 'NDVI grid root : %s' % ndvi_root
@@ -220,7 +214,7 @@ if __name__ == '__main__':
     if not args.noconfirm:
         if not utils.confirm(prompt='Proceed?', resp=True):
             sys.exit(0)
-            
+
     print 'Building dictionary of fraction:tilename...'
     # Build a dictionary frac_num:tilename
     frac_tilename = {}
@@ -229,24 +223,27 @@ if __name__ == '__main__':
         for f_n in modgrid.get_cells_for_tile(h, v):
             frac_tilename[f_n] = t_n
 
-    print 'Building dictionary of tilename:HDF_files...'
+    print 'Building dict of dict of tilename->file index'
     # Find MODIS files for every tile
-    tilename_filename = {}
+    # This builds a dict of dict that maps each tilename to a dict of
+    # (timestamp, filename) like
+    # {'h29v07' : {950832000000: 'date1.hdf', 952214400000: 'date2.hdf'}}
+    tilename_fileindex = {}
     for t_n in tiles:
         hdf_f = modis.ndvi_hdf_for_tile(t_n, modis_dir)
         hdf_f = {ts:fname for (fname, ts) in hdf_f}
-        tilename_filename[t_n] = hdf_f
+        tilename_fileindex[t_n] = hdf_f
 
     # Launch the process
     if nworkers is not None and nworkers > 1:
         print 'Using joblib.Parallel with nworkers=%d' % nworkers
         joblib.Parallel(n_jobs=nworkers)(
             joblib.delayed(complete_frac)(frac_num, ndvi_root, qa_root,
-                                          frac_tilename, tilename_filename)
+                                          frac_tilename, tilename_fileindex)
             for frac_num in fractions
         )
     else:
         for frac_num in fractions:
             complete_frac(frac_num, ndvi_root, qa_root,
-                          frac_tilename, tilename_filename)
+                          frac_tilename, tilename_fileindex)
 

@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from osgeo import osr, gdal
 import tempfile
+import pytest
 import unittest
 import subprocess
 import shutil
@@ -38,7 +39,8 @@ def assert_grids_same(root1, root2):
         assert_array_equal(data1, data2)
 
 
-class CompleteNDVIWorldgridTest(test_utils.RasterCubeTest):
+@pytest.mark.usefixtures("setup_env")
+def test_complete_ndvi_worldgrid(tempdir):
     """
     Note that this is a quite long test
 
@@ -55,79 +57,64 @@ class CompleteNDVIWorldgridTest(test_utils.RasterCubeTest):
         - With frac_ndates = 4 (grid5)
     All 5 grids should contain the exact same data
     """
-    def setUp(self):
-        super(CompleteNDVIWorldgridTest, self).setUp()
-        self.tmpdir = tempfile.mkdtemp()
+    create_script = os.path.join(test_utils.get_rastercube_dir(),
+            'scripts', 'create_ndvi_worldgrid.py')
+    complete_script = os.path.join(test_utils.get_rastercube_dir(),
+            'scripts', 'complete_ndvi_worldgrid.py')
 
-    def tearDown(self):
-        assert len(self.tmpdir) > 0
-        shutil.rmtree(self.tmpdir)
+    dates_csv = os.path.join(utils.get_data_dir(), '1_manual',
+                             'ndvi_dates.csv')
+    dates_csv_2 = os.path.join(utils.get_data_dir(), '1_manual',
+                               'ndvi_dates.2.csv')
+    dates_csv_3 = os.path.join(utils.get_data_dir(), '1_manual',
+                               'ndvi_dates.3.csv')
 
-    def test_complete_ndvi_worldgrid(self):
-        create_script = os.path.join(test_utils.get_rastercube_dir(),
-                'scripts', 'create_ndvi_worldgrid.py')
-        complete_script = os.path.join(test_utils.get_rastercube_dir(),
-                'scripts', 'complete_ndvi_worldgrid.py')
+    def create(rootdir, frac_ndates, dates_csv):
+        print 'Creating in %s' % rootdir
+        cmd = [
+            sys.executable,
+            create_script,
+            '--tile=h29v07',
+            '--noconfirm',
+            '--worldgrid=%s' % rootdir,
+            '--frac_ndates=%d' % frac_ndates,
+            '--dates_csv=%s' % dates_csv,
+            # speed things up
+            '--test_limit_fractions=2'
+        ]
+        subprocess.check_call(cmd)
 
-        dates_csv = os.path.join(utils.get_data_dir(), '1_manual',
-                                 'ndvi_dates.csv')
-        dates_csv_2 = os.path.join(utils.get_data_dir(), '1_manual',
-                                   'ndvi_dates.2.csv')
-        dates_csv_3 = os.path.join(utils.get_data_dir(), '1_manual',
-                                   'ndvi_dates.3.csv')
+    def complete(rootdir, dates_csv):
+        print 'Completing %s' % rootdir
+        cmd = [
+            sys.executable,
+            complete_script,
+            '--tile=h29v07',
+            '--noconfirm',
+            '--worldgrid=%s' % rootdir,
+            '--dates_csv=%s' % dates_csv
+        ]
+        subprocess.check_call(cmd)
 
-        def create(name, frac_ndates, dates_csv):
-            rootdir = os.path.join(self.tmpdir, name)
-            print 'Creating in %s' % rootdir
-            cmd = [
-                sys.executable,
-                create_script,
-                '--tile=h29v07',
-                '--noconfirm',
-                '--worldgrid=%s' % rootdir,
-                '--frac_ndates=%d' % frac_ndates,
-                '--dates_csv=%s' % dates_csv,
-                # speed things up
-                '--test_limit_fractions=2'
-            ]
-            output = subprocess.check_output(cmd)
+    roots = [os.path.join(tempdir, 'grid%d' % n) for n in range(5)]
 
-        def complete(name, dates_csv):
-            rootdir = os.path.join(self.tmpdir, name)
-            print 'Completing %s' % rootdir
-            cmd = [
-                sys.executable,
-                complete_script,
-                '--tile=h29v07',
-                '--noconfirm',
-                '--worldgrid=%s' % rootdir,
-                '--dates_csv=%s' % dates_csv
-            ]
-            output = subprocess.check_output(cmd)
+    create(roots[0], frac_ndates=2, dates_csv=dates_csv)
 
-        roots = [os.path.join(self.tmpdir, 'grid%d' % n) for n in range(5)]
+    create(roots[1], frac_ndates=3, dates_csv=dates_csv_2)
+    complete(roots[1], dates_csv)
+    # Complete must be idempotent
+    complete(roots[1], dates_csv)
 
-        create(roots[0], frac_ndates=2, dates_csv=dates_csv)
+    create(roots[2], frac_ndates=2, dates_csv=dates_csv_2)
+    complete(roots[2], dates_csv)
 
-        create(roots[1], frac_ndates=3, dates_csv=dates_csv_2)
-        complete(roots[1], dates_csv)
-        # Complete must be idempotent
-        complete(roots[1], dates_csv)
+    create(roots[3], frac_ndates=2, dates_csv=dates_csv_3)
+    complete(roots[3], dates_csv)
 
-        create(roots[2], frac_ndates=2, dates_csv=dates_csv_2)
-        complete(roots[2], dates_csv)
+    create(roots[4], frac_ndates=3, dates_csv=dates_csv_3)
+    complete(roots[4], dates_csv)
 
-        create(roots[3], frac_ndates=2, dates_csv=dates_csv_3)
-        complete(roots[3], dates_csv)
-
-        create(roots[4], frac_ndates=3, dates_csv=dates_csv_3)
-        complete(roots[4], dates_csv)
-
-        for i in range(1, 5):
-            for dsname in ['ndvi', 'qa']:
-                assert_grids_same(os.path.join(roots[0], dsname),
-                                  os.path.join(roots[i], dsname))
-
-
-if __name__ == '__main__':
-    unittest.main()
+    for i in range(1, 5):
+        for dsname in ['ndvi', 'qa']:
+            assert_grids_same(os.path.join(roots[0], dsname),
+                              os.path.join(roots[i], dsname))

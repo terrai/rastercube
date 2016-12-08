@@ -405,6 +405,10 @@ class Header(object):
         """
         assert len(frac_id) == 2, "frac_id should be (frac_num, frac_t_chunk)"
         assert np.dtype(data.dtype) == self.dtype
+        # Protect against fraction bigger than frac_ndates
+        assert data.shape[2] <= self.frac_ndates, \
+            'Corrupted fraction %d, shape[2] is %d, header frac_ndates=%d' % (
+                frac_num, data.shape[2], self.frac_ndates)
         write_frac(self.frac_fname(frac_id), data, hdfs_client)
 
     def write_all(self, data):
