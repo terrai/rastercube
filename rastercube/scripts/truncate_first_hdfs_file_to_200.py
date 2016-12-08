@@ -51,7 +51,7 @@ def truncate_frac(frac_num, ndvi_root, qa_root):
         qa = jgrid.read_frac(qa_header.frac_fname(frac_id))
     except ValueError:
         print 'Fraction', frac_num, 'is corrupted!'
-        print 'Solve the problem for frac_num:', frac_num, 'frac_d:', frac_d, 'and execute the script again
+        print 'Solve the problem for frac_num:', frac_num, 'frac_d:', frac_d, 'and execute the script again'
         return
     
     # At this point, we just have to truncate the array
