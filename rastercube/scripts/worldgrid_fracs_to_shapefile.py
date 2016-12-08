@@ -3,7 +3,7 @@ Exports the fractions of a worldgrid to a shapefile.
 
 Example invocation::
 
-    python rastercube/scripts/worldgrid_fracs_to_shapefile
+    python rastercube/scripts/worldgrid_fracs_to_shapefile.py
         --grid_root=hdfs:///user/test/ndvi
         --outfile=$HOME/Desktop/ndvi_fracs.shp
 """
