@@ -158,7 +158,7 @@ def collect_available_hdf_from_mirror(mirror_dir, base_url):
     return all_hdf_files
 
 
-def mirror_modis_dates_html(base_url, mirror_dir):
+def mirror_modis_dates_html(base_url, mirror_dir, use_wget=False):
     """
     Download all MODIS date listing pages to a local directory.
     Usually, a MODIS listing for a date should not change (only new dates
@@ -171,7 +171,11 @@ def mirror_modis_dates_html(base_url, mirror_dir):
         fname = os.path.join(mirror_dir, date + '.html')
         if not os.path.exists(fname):
             print 'Downloading ', fname
-            urllib.urlretrieve(url, fname)
+            if use_wget:
+                subprocess.check_call('/usr/bin/wget %s -O %s' % (url, fname),
+                                      shell=True)
+            else:
+                urllib.urlretrieve(url, fname)
             ndownloads += 1
             # The MODIS MOLT repository server doesn't return Content-Length
             # so urllib cannot tell if it downloaded the whole html or was
@@ -311,9 +315,9 @@ if __name__ == '__main__':
     if not args.skip_mirror:
         nchanged = 0
         nchanged += mirror_modis_dates_html(
-            config.MODIS_TERRA_URL, terra_mirror_dir)
+            config.MODIS_TERRA_URL, terra_mirror_dir, use_wget=args.force_wget)
         nchanged += mirror_modis_dates_html(
-            config.MODIS_AQUA_URL, aqua_mirror_dir)
+            config.MODIS_AQUA_URL, aqua_mirror_dir, use_wget=args.force_wget)
 
         if nchanged > 0:
             # Some new dates have been downloaded, clear the HDF cache we had
