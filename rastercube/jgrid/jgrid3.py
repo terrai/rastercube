@@ -590,13 +590,13 @@ class Header(object):
         """
         data_dir = os.path.join(self.grid_root, 'jdata')
         if not rasterio.fs_exists(data_dir, hdfs_client):
-            return np.array([])
+            return []
         else:
             fractions = rasterio.fs_list(data_dir, hdfs_client)
             # fractions is a list of fractions filenames (e.g. 14123.jdata)
             fractions = [frac_id_from_fname(fname) for fname in fractions
                          if fname.endswith('jdata')]
-            return np.array(fractions)
+            return fractions
 
     def list_available_fracnums(self, **kwargs):
         """
