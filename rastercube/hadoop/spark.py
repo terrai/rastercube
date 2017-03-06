@@ -139,7 +139,6 @@ class SparkPipelineStep(object):
             assert i1.frac_height == i2.frac_height
 
         if not jgrid3.Header.exists(output_root):
-            output_shape = self.inputs[0].shape[:2] + list(output_pixshape)
             self.output_header = self.inputs[0].copy(
                 root=output_root,
                 dtype=output_dtype,
