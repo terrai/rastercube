@@ -243,9 +243,13 @@ def _do_download_aria2(files):
 
                 del url, dst_filename
 
+        assert config.MODIS_HTTP_USER != '',\
+            "You should set MODIS_HTTP_USER in your config file"
+
         # Download using aria2
         cmd = [
-            '/usr/bin/aria2c',
+            '/usr/bin/env',
+            'aria2c',
             '--http-user=%s' % config.MODIS_HTTP_USER,
             '--http-pass=%s' % config.MODIS_HTTP_PASS,
             '-i %s' % download_fname
