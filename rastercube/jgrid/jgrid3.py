@@ -317,7 +317,8 @@ class Header(object):
             fnames.append(self.frac_fname(frac_id))
         return fnames
 
-    def load_frac_by_num(self, frac_num, t_from=None, t_to=None):
+    def load_frac_by_num(self, frac_num, t_from=None, t_to=None,
+                         hdfs_client=None):
         """
         Load a fraction given its frac_num and a date range
         """
@@ -363,7 +364,8 @@ class Header(object):
                 return_none=True,
                 slice=((0, self.frac_height),
                        (0, self.frac_width),
-                       (frac_t_from, frac_t_to))
+                       (frac_t_from, frac_t_to)),
+                hdfs_client=hdfs_client
             )
             if frac_data is not None:
                 data[:, :, slice_t_from:slice_t_to] = frac_data
