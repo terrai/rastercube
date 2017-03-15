@@ -307,6 +307,16 @@ class Header(object):
     def frac_fname(self, frac_id):
         return os.path.join(self.grid_root, 'jdata', '%d.%d.jdata' % frac_id)
 
+    def frac_fnames_for_num(self, frac_num):
+        """
+        Returns the list of filenames for all the date slices of this fraction
+        """
+        fnames = []
+        for frac_d in xrange(self.num_dates_fracs):
+            frac_id = (frac_num, frac_d)
+            fnames.append(self.frac_fname(frac_id))
+        return fnames
+
     def load_frac_by_num(self, frac_num, t_from=None, t_to=None):
         """
         Load a fraction given its frac_num and a date range
@@ -398,6 +408,21 @@ class Header(object):
                     dtype=self.dtype
                 )
                 return data
+
+    def write_frac_by_num(self, frac_num, data, hdfs_client=None):
+        """
+        Write all the dates for a single fraction
+        """
+        assert data.shape[2] == self.shape[2],\
+            "You must provide a fraction with all dates to write_frac_by_num"
+        assert np.dtype(data.dtype) == self.dtype
+
+        # Write each date slice frac
+        for frac_d in xrange(self.num_dates_fracs):
+            t1, t2 = self.frac_time_range(frac_d)
+            frac_id = (frac_num, frac_d)
+            d_data = data[:, :, t1:t2]
+            self.write_frac(frac_id, d_data)
 
     def write_frac(self, frac_id, data, hdfs_client=None):
         """

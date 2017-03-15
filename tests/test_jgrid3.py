@@ -133,6 +133,40 @@ class HeaderTests(unittest.TestCase):
         assert data.dtype == data2.dtype
         assert np.allclose(data, data2, atol=1e-3)
 
+    def test_write_load_frac_by_num(self):
+        """Test read/write of single fraction"""
+        frac_width = 6
+        frac_height = 8
+        frac_ndates = 2
+
+        timestamps = [1, 2, 3, 5, 6]
+        data = np.random.uniform(size=(frac_height, frac_width, len(timestamps)))
+
+        geot = (0, 1, 0,
+                0, 0, 1)
+
+        width = 60
+        height = 48
+        header = jgrid3.Header(
+            self.grid_root,
+            width=width,
+            height=height,
+            shape=(height, width, len(timestamps)),
+            frac_width=frac_width,
+            frac_height=frac_height,
+            frac_ndates=frac_ndates,
+            dtype=data.dtype,
+            sr_wkt=WGS84_WKT,
+            geot=geot,
+            timestamps_ms=timestamps)
+        frac_num = 0
+        header.write_frac_by_num(frac_num, data)
+        data2 = header.load_frac_by_num(frac_num)
+
+        assert data.dtype == data2.dtype
+        assert np.allclose(data, data2, atol=1e-3)
+
+
     def test_frac_for_xy(self):
         header = self._create_test_grid_header1()
         frac_num = header.frac_for_xy(0, 0)
