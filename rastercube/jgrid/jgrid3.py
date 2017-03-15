@@ -203,7 +203,7 @@ class Header(object):
             return None
 
     def copy(self, root=None, dtype=None, shape=None, nodataval=None,
-             meta=None):
+             meta=None, frac_ndates=None):
         """
         Return a copy of this header, with a possibly different root/dtype
         """
@@ -217,10 +217,12 @@ class Header(object):
             nodataval = self.nodataval
         if meta is None:
             meta = copy.deepcopy(self.meta)
+        if frac_ndates is None:
+            frac_ndates = self.frac_ndates
         return Header(
             root, self.width, self.height, self.frac_width, self.frac_height,
             self.spatialref.ExportToWkt(), dtype, self.geot, shape, meta=meta,
-            nodataval=nodataval)
+            nodataval=nodataval, frac_ndates=frac_ndates)
 
     def geot_for_xyfrom(self, xy_from):
         """
