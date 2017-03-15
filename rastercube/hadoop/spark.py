@@ -4,6 +4,7 @@ import functools
 import urlparse
 import rastercube.config as config
 import rastercube.jgrid.jgrid3 as jgrid3
+import rastercube.hadoop.common as hadoop_common
 
 
 def _process_frac_multi_inputs(frac_num, inputs_root, output_root, map_fn):
@@ -16,37 +17,38 @@ def _process_frac_multi_inputs(frac_num, inputs_root, output_root, map_fn):
     inputs = [jgrid3.Header.load(r) for r in inputs_root]
     output_header = jgrid3.Header.load(output_root)
 
-    client = hdfs_client()
-    inputs = [h.load_frac(frac_num, client) for h in inputs]
-    for data, mask in inputs:
+    client = hadoop_common.hdfs_client()
+    inputs = [h.load_frac_by_num(frac_num, hdfs_client=client) for h in inputs]
+    for data in inputs:
         assert data is not None, "None data for frac_num=%d" % frac_num
-    out_data, out_mask = map_fn(inputs)
-    output_header.write_frac(frac_num, out_data, out_mask)
-    out_fname = output_header.frac_fname(frac_num)
+    out_data = map_fn(inputs)
+    output_header.write_frac_by_num(frac_num, out_data, hdfs_client=client)
+    out_fname = output_header.frac_fnames_for_num(frac_num)
     return out_fname
 
 
-def _process_frac_binary(kv, output_root, frac_version, map_fn):
-    """
-    A map wrapper that can be used with sc.binaryFiles
-    All the args except 'kv' should be bounds with functools.partial before
-    passing this to spark's map
-    Args:
-        kv: The (fname, binary_data) that will result from sc.binaryFiles
-        output_root: The output gridroot
-        map_fn: The actual map function
-    """
-    fname, binary_data = kv
-    fracid = jgrid3.frac_id_from_fname(fname)
-    output_header = jgrid3.Header.load(output_root)
-    print '_process_frac_binary with frac_num=%s' % fracid
+# See the TODO below regarding single-inputs jobs
+#def _process_frac_binary(kv, output_root, frac_version, map_fn):
+    #"""
+    #A map wrapper that can be used with sc.binaryFiles
+    #All the args except 'kv' should be bounds with functools.partial before
+    #passing this to spark's map
+    #Args:
+        #kv: The (fname, binary_data) that will result from sc.binaryFiles
+        #output_root: The output gridroot
+        #map_fn: The actual map function
+    #"""
+    #fname, binary_data = kv
+    #fracid = jgrid3.frac_id_from_fname(fname)
+    #output_header = jgrid3.Header.load(output_root)
+    #print '_process_frac_binary with frac_num=%s' % fracid
 
-    data, mask = jgrid3.unpack_frac(binary_data, frac_version)
-    assert data is not None, "None data for fracid=%s" % fracid
-    out_data, out_mask = map_fn(data, mask)
-    output_header.write_frac(fracid, out_data, out_mask)
-    out_fname = output_header.frac_fname(fracid)
-    return out_fname
+    #data, mask = jgrid3.unpack_frac(binary_data, frac_version)
+    #assert data is not None, "None data for fracid=%s" % fracid
+    #out_data, out_mask = map_fn(data, mask)
+    #output_header.write_frac(fracid, out_data, out_mask)
+    #out_fname = output_header.frac_fnames_for_num(frac_num)
+    #return out_fname
 
 
 def add_egg_to_context(sc, egg_fname):
@@ -149,7 +151,7 @@ class SparkPipelineStep(object):
             self.output_header = jgrid3.Header.load(output_root)
             assert output_dtype == self.output_header.dtype
 
-        input_fracs = [set(h.list_available_fractions()) for h in self.inputs]
+        input_fracs = [set(h.list_available_fracnums()) for h in self.inputs]
         input_fracs = set.intersection(*input_fracs)
 
         self.total_num_fracs = len(input_fracs)
@@ -159,7 +161,7 @@ class SparkPipelineStep(object):
         else:
             todo_fracs = set.difference(
                 input_fracs,
-                self.output_header.list_available_fractions())
+                self.output_header.list_available_fracnums())
         self.todo_fractions = sorted(list(todo_fracs))
         self._map_fn = map_fn
 
@@ -177,7 +179,8 @@ class SparkPipelineStep(object):
         for fname in self.dep_files:
             self.sc.addFile(fname)
 
-        if not self.force_multi_inputs and len(self.inputs) == 1:
+        # TODO: Re-enable this once we have tests written for it
+        if False and not self.force_multi_inputs and len(self.inputs) == 1:
             # This uses sc.binaryFiles which reads (fname, content) as a RDD.
             # We then save to the output *IN* the map function. This is because
             # if we return the output binary from our map(), the driver will
