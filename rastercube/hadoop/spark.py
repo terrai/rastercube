@@ -227,6 +227,11 @@ class SparkPipelineStep(object):
                 map_fn=self._map_fn
             )
             nslices = len(self.todo_fractions)
+            if nslices == 0:
+                print 'No fractions to process... returning'
+                self.results = []
+                return
+
             fracs_rdd = self.sc.parallelize(self.todo_fractions, nslices)
             print 'Number of fractions in RDD : %d' % fracs_rdd.count()
             out_files = fracs_rdd.map(mapper).collect()
