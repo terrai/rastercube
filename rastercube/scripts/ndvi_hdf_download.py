@@ -261,6 +261,8 @@ def _do_download_aria2(files):
 
         # Copy files to their final destination
         for tmpname, dstname in tmp2fname.items():
+            year_dir = os.path.join(os.path.dirname(dstname), os.pardir)
+            utils.mkdir_p(year_dir)
             shutil.copyfile(tmpname, dstname)
             print 'Finished ', dstname
 
