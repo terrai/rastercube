@@ -16,6 +16,11 @@ def stop_hdfs():
 @task
 @runs_on('hadoop_master')
 def format_namenode():
+    # Make the user confirm because this is really dangerous
+    ans = raw_input('This will DELETE ALL DATA on HDFS, are you sure ? ([y|n]) ')
+    if ans != 'y':
+        return
+
     with cd('$HADOOP_HOME'):
         run('bin/hdfs namenode -format -nonInteractive -clusterId hdfs-terrai-cluster')
 
