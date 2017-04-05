@@ -3,13 +3,13 @@ from inventory import runs_on
 
 @task
 @runs_on('hadoop_master')
-def start_hdfs():
+def start():
     with cd('$HADOOP_HOME'):
         run('sbin/start-dfs.sh')
 
 @task
 @runs_on('hadoop_master')
-def stop_hdfs():
+def stop():
     with cd('$HADOOP_HOME'):
         run('sbin/stop-dfs.sh')
 

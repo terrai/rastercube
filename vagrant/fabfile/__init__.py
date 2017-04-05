@@ -1,5 +1,5 @@
 from fabric.api import *
 
 # commands
-import hadoop
+import hdfs
 import spark
