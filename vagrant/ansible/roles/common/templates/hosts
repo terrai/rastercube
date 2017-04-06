@@ -1,2 +1,2 @@
-{{ hostvars['master']['ansible_ssh_host'] }} master
-{{ hostvars['slave']['ansible_ssh_host'] }} slave
+{{ hostvars['master']['ansible_ssh_host'] }} master.vagrant.local
+{{ hostvars['slave']['ansible_ssh_host'] }} slave.vagrant.local

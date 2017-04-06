@@ -13,7 +13,7 @@
   conda: name=gdal state=present version=2.1.0
 
 - name: Install hdf5
-  conda: name=hdf5 state=present version=1.8.15.1
+  conda: name=hdf5 state=present version=1.8
 
 - name: Install pep8
   conda: name=pep8 state=present

@@ -38,7 +38,7 @@
   sudo: yes
 
 - name: Install libssl-dev
-  apt: name=libssl-dev state=present
+  apt: name=libssl-dev state=present update_cache=yes
   sudo: yes
 
 - name: Install libbz2-dev

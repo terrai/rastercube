@@ -1,2 +1,4 @@
 spark_home: "{{home}}/hadoop/spark"
 spark_master: "{{ hadoop_master_fqdn }}"
+spark_master_ip: "{{ hadoop_master_ip }}"
+spark_local_ip: "{{ ansible_ssh_host }}"

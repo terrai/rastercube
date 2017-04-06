@@ -10,8 +10,19 @@ Vagrant.configure("2") do |config|
   # DNS to function)
   # Install with
   #   vagrant plugin install landrush
-  config.landrush.enabled = true
-  config.landrush.tld = 'vagrant.local'
+  #config.landrush.enabled = true
+  #config.landrush.tld = 'vagrant.local'
+
+  # This require the vagrant-dns plugin to enable DNS
+  # Install with
+  #   vagrant plugin install vagrant-dns
+  # And run the DNS server with
+  #   vagrant dns --start
+  # See
+  # https://github.com/BerlinVagrant/vagrant-dns
+  config.dns.tld = "local"
+  config.dns.patterns = [/^.*vagrant.local$/]
+
   config.vm.box = "ubuntu/trusty64"
   config.vm.define "master" do |master|
     master.vm.provider "virtualbox" do |vb|
@@ -49,3 +60,6 @@ Vagrant.configure("2") do |config|
     #ansible.verbose = 'v'
   end
 end
+
+# This is optional logfile for vagrant-dns
+VagrantDNS::Config.logger = Logger.new("dns.log")
