@@ -46,3 +46,9 @@ MODIS_AQUA_TILES = list(MODIS_TERRA_TILES)
 
 if 'RASTERCUBE_CONFIG' in os.environ:
     execfile(os.environ['RASTERCUBE_CONFIG'])
+
+# See the comment in rastercube.hadoop.spark.spark_context regarding config
+# This is where the spark worker will receive the user's custom rastercube
+# config
+if 'RASTERCUBE_SPARK_CONFIG' in os.environ:
+    exec(os.environ['RASTERCUBE_SPARK_CONFIG'])

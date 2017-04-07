@@ -1,6 +1,7 @@
 import os
 import rastercube
 import functools
+import tempfile
 import urlparse
 import rastercube.config as config
 import rastercube.jgrid.jgrid3 as jgrid3
@@ -78,7 +79,19 @@ def spark_context(appname, master=None, exec_mem='4g', nworkers=None,
     conf.set('spark.executor.memory', exec_mem)
     if nworkers is not None:
         conf.set('spark.cores.max', '%d' % nworkers)
-    sc = SparkContext(conf=conf)
+
+    # If the user has a custom config file, we need to somehow put it on spark
+    # workers as well. We can't rely on the RASTERCUBE_CONFIG var on spark
+    # workers because they won't have the config file.
+    # So instead, we copy the config to the RASTERCUBE_SPARK_CONFIG env var
+    # that is executed as python code in rastercube.config
+    if 'RASTERCUBE_CONFIG' in os.environ:
+        with open(os.environ['RASTERCUBE_CONFIG']) as f:
+            env = {'RASTERCUBE_SPARK_CONFIG': f.read()}
+        sc = SparkContext(conf=conf, environment=env)
+    else:
+        sc = SparkContext(conf=conf)
+
     if not verbose:
         sc.setLogLevel("WARN")
     egg_fname = os.path.join(
