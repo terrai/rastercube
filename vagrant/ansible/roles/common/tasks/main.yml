@@ -31,3 +31,8 @@
     src=bashrc
     dest={{home}}/.bashrc
 
+- name: Install G++
+  sudo: yes
+  apt:
+      name: g++
+      state: present
