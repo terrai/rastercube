@@ -1,12 +1,24 @@
+.. _overview:
+
 ========
 Overview
 ========
 
 `rastercube` is a python package to store large geographical raster collections
 on the Hadoop File System (HDFS). The initial use case was to store and quickly
-access MODIS NDVI timeseries for any pixel on the whole planet.
+access MODIS NDVI timeseries for any pixel on the whole planet. In addition, `rastercube` provides facility to process the data using Spark.
 
-In addition, `rastercube` provides facility to process the data using Spark.
+It allows you to turn a set of raster images (e.g. MODIF HDF files) into a 3D
+cube that enable efficient querying of pixels time series.
+
+.. image:: images/ndvi.png
+   :width: 250px
+
+It was initially written to perform pantropical
+land-cover change detection in the `terra-i <http://terra-i.org/terra-i.html>`_
+project, based on MODIS NDVI imagery.
+
+The central component is the :class:`rastercube.jgrid.jgrid3.Header` class
 
 All the geographical computations are handled by `gdal`.
 
