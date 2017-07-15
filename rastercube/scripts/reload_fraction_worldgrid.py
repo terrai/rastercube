@@ -103,9 +103,9 @@ if __name__ == '__main__':
         
     _start = time.time()
 
-    ## -- Find the filenames of the HDF file for this date and our tile
+    # -- Find the filenames of the HDF file for this date and our tile
     hdf_files = modis.ndvi_hdf_for_tile(tilename, modis_dir)
-    hdf_files = {ts:fname for (fname, ts) in hdf_files}
+    hdf_files = {ts: fname for (fname, ts) in hdf_files}
 
     ndvi = np.empty((ndvi_header.frac_height, ndvi_header.frac_width, len(selected_dates)), dtype='int16')
     qa = np.empty((qa_header.frac_height, qa_header.frac_width, len(selected_dates)), dtype='uint16')
@@ -115,8 +115,8 @@ if __name__ == '__main__':
         print t_i, fname
         
         new_ndvi, new_qa = read_ndvi_qa(fname, i_range, j_range)
-        ndvi[:,:,t_i] = new_ndvi
-        qa[:,:,t_i] = new_qa
+        ndvi[:, :, t_i] = new_ndvi
+        qa[:, :, t_i] = new_qa
         
     ndvi_header.write_frac(frac_id, ndvi)
     qa_header.write_frac(frac_id, qa)

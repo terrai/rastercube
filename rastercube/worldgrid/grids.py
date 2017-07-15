@@ -48,7 +48,7 @@ class GLCFGrid(object):
     #      Ygeo = GT(3) + Xpixel*GT(4) + Yline*GT(5)
     #
     # Obtained from gdalinfo
-    pix_size = (0.004166666666667,-0.004166666666667)
+    pix_size = (0.004166666666667, -0.004166666666667)
     geo_orig = (-GLCF_tile_width * pix_size[0] * GLCF_n_tiles_x / 2,
                 -GLCF_tile_height * pix_size[1] * GLCF_n_tiles_y / 2)
     geot = (geo_orig[0], pix_size[0], 0.0,
@@ -69,8 +69,8 @@ class GLCFGrid(object):
 
     # Not all letters correspond to row, so store a mapping here
     ROW_MAP = {
-        'X': 0, 'W': 1, 'V': 2, 'U': 3, 'T': 4, 'S':5, 'R':6, 'Q':7, 'P':8,
-        'N': 9, 'M':10, 'L': 11, 'K': 12, 'J': 13, 'H': 14, 'G': 15, 'F': 16,
+        'X': 0, 'W': 1, 'V': 2, 'U': 3, 'T': 4, 'S': 5, 'R': 6, 'Q': 7, 'P': 8,
+        'N': 9, 'M': 10, 'L': 11, 'K': 12, 'J': 13, 'H': 14, 'G': 15, 'F': 16,
         'E': 17, 'D': 18, 'C': 19
     }
 

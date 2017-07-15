@@ -19,6 +19,7 @@ def latlng_bounding_box_from_ds(ds):
     ds_to_wgs84 = osr.CoordinateTransformation(ds_sr, wgs84_sr)
 
     geot = ds.GetGeoTransform()
+
     def _xy2latlng(x, y):
         x_geo = geot[0] + x * geot[1] + y * geot[2]
         y_geo = geot[3] + x * geot[4] + y * geot[5]
@@ -82,7 +83,7 @@ def gdal_warp(src_ds, dst_wkt):
     # Call AutoCreateWarpedVRT() to fetch default values for target
     # raster dimensions and geotransform
     tmp_ds = gdal.AutoCreateWarpedVRT(src_ds,
-                                      None, # src_wkt from source
+                                      None,  # src_wkt from source
                                       dst_wkt,
                                       resampling,
                                       error_threshold)

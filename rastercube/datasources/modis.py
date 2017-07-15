@@ -69,7 +69,7 @@ def parse_ndvi_filename(filepath):
         date = datetime.strptime(julian_date, '%Y%j')
         timestamp_ms = int(calendar.timegm(date.timetuple()) * 1000.0)
         return {
-            'satellite' : m.group('sattype'),
+            'satellite': m.group('sattype'),
             'tile_name': tile_name,
             'h': h,
             'v': v,
@@ -167,8 +167,8 @@ def qa_to_qaconf_slow(qa_data):
     #  1    Yes
     #  0    No
     # TODO: Not sure, but I think we can ignore this. Terra-i does ignore it
-    #atm_corr = (qa_data >> 9) & 0x1
-    #valid &= atm_corr == 0
+    # atm_corr = (qa_data >> 9) & 0x1
+    # valid &= atm_corr == 0
 
     # 10 Mixed Clouds
     #  1    Yes

@@ -78,6 +78,7 @@ def fs_read(fname, hdfs_client=None):
             return blob
     raise IOError("Error reading %s" % fname)
 
+
 def fs_delete(path, hdfs_client=None, recursive=False):
     """
     Delete a local (fs://) or HDFS(hdfs://) file or directory, possibly
@@ -101,6 +102,7 @@ def fs_delete(path, hdfs_client=None, recursive=False):
                 os.rmdir(path)
             else:
                 os.remove(path)
+
 
 def fs_exists(fname, hdfs_client=None):
     """

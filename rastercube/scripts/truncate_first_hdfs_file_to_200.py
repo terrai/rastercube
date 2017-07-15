@@ -57,7 +57,7 @@ def truncate_frac(frac_num, ndvi_root, qa_root):
     # At this point, we just have to truncate the array
     if ndvi is not None:
         if ndvi.shape[2] > ndvi_header.frac_ndates:
-            ndvi = ndvi[:,:,0:ndvi_header.frac_ndates]
+            ndvi = ndvi[:, :, 0:ndvi_header.frac_ndates]
             ndvi_header.write_frac(frac_id, ndvi)
         else:
             print frac_num, ': NDVI already OK'
@@ -66,7 +66,7 @@ def truncate_frac(frac_num, ndvi_root, qa_root):
 
     if qa is not None:
         if qa.shape[2] > qa_header.frac_ndates:
-            qa = qa[:,:,0:qa_header.frac_ndates]
+            qa = qa[:, :, 0:qa_header.frac_ndates]
             qa_header.write_frac(frac_id, qa)
         else:
             print frac_num, ': QA already OK'

@@ -108,14 +108,14 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
             qa_header.write_frac(frac_id, qa)
             # Prepare variables for a new fraction
             frac_d += 1
-            ndvi = new_ndvi[:,:,None]
-            qa = new_qa[:,:,None]
+            ndvi = new_ndvi[: , :, None]
+            qa = new_qa[:, :, None]
         else:
             # TODO: If we end up completing multiple dates, we could preallocate
             # But for now, this is unlikely (we'll complete with the most
             # recent data)
-            ndvi = np.concatenate([ndvi, new_ndvi[:,:,None]], axis=2)
-            qa = np.concatenate([qa, new_qa[:,:,None]], axis=2)
+            ndvi = np.concatenate([ndvi, new_ndvi[:, :, None]], axis=2)
+            qa = np.concatenate([qa, new_qa[:, :, None]], axis=2)
 
         assert np.all(ndvi.shape == qa.shape)
 
@@ -125,8 +125,8 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
     qa_header.write_frac(frac_id, qa)
 
     print 'Processed %d, appended %d dates, took %.02f [s]' % (frac_num,
-          len(ndvi_header.timestamps_ms) - most_recent_t,
-          time.time() - _start)
+           len(ndvi_header.timestamps_ms) - most_recent_t,
+           time.time() - _start)
 
     sys.stdout.flush()
 
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     qa_header = jgrid.load(qa_root)
     assert np.all(ndvi_header.timestamps_ms == dates_ms)
     assert np.all(qa_header.timestamps_ms == dates_ms)
-    assert np.all(ndvi_header.list_available_fracnums() == \
+    assert np.all(ndvi_header.list_available_fracnums() ==
                   qa_header.list_available_fracnums())
 
 
@@ -193,7 +193,7 @@ if __name__ == '__main__':
         # -- Figure out the fractions we have to update
         t_h, t_v = modis.parse_tilename(tilename)
         fractions_tile = modgrid.get_cells_for_tile(t_h, t_v)
-        assert np.all(ndvi_header.list_available_fracnums() == \
+        assert np.all(ndvi_header.list_available_fracnums() ==
                       qa_header.list_available_fracnums())
         fractions = np.intersect1d(fractions_tile,
                                    ndvi_header.list_available_fracnums())

@@ -74,7 +74,7 @@ def spark_context(appname, master=None, exec_mem='4g', nworkers=None,
     """
     if master is None:
         master = config.SPARK_MASTER
-    from pyspark import SparkContext, SparkConf
+    from pyspark import SparkContext, SparkConf  # noqa
     conf = SparkConf().setMaster(master).setAppName(appname)
     conf.set('spark.executor.memory', exec_mem)
     if nworkers is not None:
@@ -181,6 +181,9 @@ class SparkPipelineStep(object):
         if dep_files is None:
             dep_files = []
         self.dep_files = dep_files
+
+        self.sc = None
+        self.results = None
 
     def print_num_to_process(self):
         print '%d fractions to process (out of %d total)' % (

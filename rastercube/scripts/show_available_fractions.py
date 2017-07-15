@@ -57,7 +57,7 @@ if __name__ == '__main__':
         print tilename, ':',
         sys.stdout.flush()
 
-        ## -- Find the filename of the HDF file for this date and our tile
+        # -- Find the filename of the HDF file for this date and our tile
         print 'Finding files...',
         sys.stdout.flush()
         hdf_files = modis.ndvi_hdf_for_tile(tilename, modis_dir)

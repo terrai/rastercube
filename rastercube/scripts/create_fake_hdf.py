@@ -53,13 +53,6 @@ def collect_hdf_files(tilename, hdf_dir):
     assert len(hdf_files) > 0, 'No matching HDF files found'
     print len(hdf_files), ' HDF files in srcdir'
 
-    #if start_date is not None:
-    #    hdf_files = filter(lambda t: t[1] >= start_date, hdf_files)
-    #if end_date is not None:
-    #    hdf_files = filter(lambda t: t[1] <= end_date, hdf_files)
-
-    #print len(hdf_files), ' HDF files remaining after date filter'
-
     return hdf_files
 
 
@@ -104,10 +97,6 @@ if __name__ == '__main__':
             sys.exit(-1)
 
     shutil.copyfile(model_hdf, output_fname)
-    #ds = gdal.Open(output_fname)
-    #src_ds = gdal.Open(model_hdf)
-    #hdf_driver = gdal.GetDriverByName("HDF4")
-    #dst_ds = hdf_driver.CreateCopy(output_fname, src_ds)
 
     d = pyhdf.SD.SD(output_fname, pyhdf.SD.SDC.WRITE)
     ndvi = d.select('250m 16 days NDVI')

@@ -12,7 +12,8 @@ import pkg_resources
 import atexit
 
 # Cleanup tmpdir used by asset_fname on interpreter exit
-atexit.register(lambda : pkg_resources.cleanup_resources())
+atexit.register(lambda: pkg_resources.cleanup_resources())
+
 
 def asset_fname(relpath):
     """

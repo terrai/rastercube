@@ -52,7 +52,7 @@ def import_glcf_tile(glcf_header, cell_num, tilefile):
         band = gdal_ds.GetRasterBand(1)
         nodata_val = band.GetNoDataValue()
         print "NoData : ", nodata_val
-        glcf_data[:,:,0] = band.ReadAsArray()
+        glcf_data[:, :, 0] = band.ReadAsArray()
 
     glcf_header.write_frac((cell_num, 0), glcf_data)
 

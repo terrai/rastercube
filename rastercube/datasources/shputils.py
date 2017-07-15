@@ -59,7 +59,6 @@ def load_polygons_from_shapefile(filename, target_sr):
         polygons.append(points)
         attributes.append(attr)
 
-    #print len(polygons), ' loaded from ', filename
     return polygons, attributes
 
 

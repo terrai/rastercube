@@ -38,6 +38,7 @@ def add_region_arg(parser):
              '  <region_file.geojson>:region1,region2'
     )
 
+
 class Regions(object):
     """
     A helper class to load polygons defining regions from geojson.
@@ -113,6 +114,7 @@ def register_regions_collection(geojson_fname):
 
 register_regions_collection(utils.asset_fname('assets/modis_tiles.geojson'))
 register_regions_collection(utils.asset_fname('assets/continents.geojson'))
+
 
 def polygon_for_region(regspec):
     """

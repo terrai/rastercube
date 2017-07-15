@@ -24,9 +24,6 @@ Example invocation::
     python rastercube/scripts/ndvi_hdf_download.py
 
 """
-#import requests_cache
-#requests_cache.install_cache()
-
 import os
 import sys
 import argparse
@@ -185,9 +182,10 @@ def mirror_modis_dates_html(base_url, mirror_dir, use_wget=False):
                 # seek 10 bytes from the end
                 f.seek(-10, 2)
                 line = f.read(10)
-                if not "</html>" in line:
-                    raise urllib.ContentTooShortError("Couldn't find </html>" +
-                            " in downloaded file, probably a partial download")
+                if "</html>" not in line:
+                    raise urllib.ContentTooShortError(
+                        "Couldn't find </html> in downloaded file, probably a partial download", ""
+                    )
 
             # Just avoid firing requests as fast as possible
             time.sleep(0.1)
@@ -304,8 +302,8 @@ if __name__ == '__main__':
     existing_hdf_files = modis.ndvi_list_hdf(hdf_dir)
 
     if args.tile is not None:
-        terra_tiles = set([args.tile])
-        aqua_tiles = set([args.tile])
+        terra_tiles = {args.tile}
+        aqua_tiles = {args.tile}
     else:
         terra_tiles = set(config.MODIS_TERRA_TILES)
         aqua_tiles = set(config.MODIS_AQUA_TILES)

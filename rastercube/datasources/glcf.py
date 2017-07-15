@@ -64,7 +64,7 @@ def plot_glcf_labelmap(labels, ax=None):
         ax = pl.subplot(111)
 
     vimg = glcf_to_rgb(labels)
-    vimg[labels.mask] = (0,0,0)
+    vimg[labels.mask] = (0, 0, 0)
     ax.imshow(vimg, interpolation='nearest')
 
     lgd_patches = []

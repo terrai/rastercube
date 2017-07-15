@@ -40,9 +40,7 @@ def load_poly_xy_from_jgrid(header, polygon_xy, **kwargs):
 
     ndvi_data = header.load_slice_xy(xy_from, xy_to, **kwargs)
 
-    #start = time.time()
     poly_mask = imutils.rasterize_poly(polygon_xy - xy_from, ndvi_data.shape)
-    #print 'Rasterization took %f [s]' % (time.time() - start)
 
     return ndvi_data, poly_mask, xy_from
 

@@ -64,6 +64,7 @@ def read_frac(fname, hdfs_client=None):
             # If reading from fs://, we short-circuit fs_read
             return np.load(rasterio.strip_uri_proto(fname, 'fs://'))
 
+
 def write_frac(fname, data, hdfs_client=None):
     if fname.startswith('hdfs://'):
         buf = StringIO.StringIO()
@@ -332,7 +333,7 @@ class Header(object):
         ndates = t_to - t_from
 
         data = np.zeros([self.frac_height, self.frac_width, ndates],
-                         dtype=self.dtype)
+                        dtype=self.dtype)
         # Fill with nodata if we have
         if self.nodataval is not None:
             data[:] = self.nodataval
@@ -462,8 +463,8 @@ class Header(object):
         """
         Returns the fraction number that will contains the point (x, y)
         """
-        assert x >= 0 and x < self.width
-        assert y >= 0 and y < self.height
+        assert 0 <= x < self.width
+        assert 0 <= y < self.height
         frac_y = int(np.floor(y / self.frac_height))
         frac_x = int(np.floor(x / self.frac_width))
         frac_num = frac_y * self.num_x_fracs + frac_x
@@ -506,12 +507,10 @@ class Header(object):
 
         assert self.in_bounds_xy(xy_from)
         assert self.in_bounds_xy(xy_to)
-        assert t_from >= 0 and t_from < self.shape[2]
-        assert t_to >= 0 and t_to > t_from and t_to <= self.shape[2]
-
+        assert 0 <= t_from < self.shape[2]
+        assert 0 <= t_to <= self.shape[2] and t_to > t_from
 
         fracs = self.fracs_for_rect_xy(xy_from, xy_to)
-        #print len(fracs), ' fractions in slice'
         sys.stdout.flush()
 
         slice_width = xy_to[0] - xy_from[0]
@@ -634,7 +633,6 @@ class Header(object):
         fracs = self.list_available_fractions(**kwargs)
         # extract the frac_num
         return sorted(set(list([f[0] for f in fracs])))
-
 
     def to_dict(self):
         d = {
