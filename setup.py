@@ -11,27 +11,9 @@ import glob
 from setuptools import setup, Extension, find_packages
 from Cython.Build import cythonize
 
-IS_OSX = platform.system() == 'Darwin'
 
-if IS_OSX:
-    # Build with gcc because we use libstdc++ (that's what conda is built
-    # with) and osx' xcode ships with a pre c++11 libstdc++ (which causes
-    # errors because the c++11 stuff is in tr1/).
-    # Also, clang on osx doesn't support openmp
-    os.environ['CXX'] = '/usr/local/bin/g++-6'
-    os.environ['CC'] = '/usr/local/bin/gcc-6'
-
-    cflags = []
-    ldflags = []
-else:
-    # Note that if you run on a spark cluster, you have to compile the
-    # code on each node in the cluster, otherwise if the nodes have different
-    # architectures, you might run into crashes
-    cflags = ['-march=native']
-    ldflags = []
-
-cflags += ['-std=c++11', '-O3', '-fopenmp']
-ldflags += ['-std=c++11', '-fopenmp']
+cflags = ['-march=native', '-std=c++11', '-O3', '-fopenmp']
+ldflags = ['-std=c++11', '-fopenmp']
 
 landsat8qa = Extension(
     'rastercube.datasources.landsat8_qa',

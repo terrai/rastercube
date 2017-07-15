@@ -1,8 +1,8 @@
 .. _overview:
 
-========
-Overview
-========
+===============
+Getting started
+===============
 
 `rastercube` is a python package to store large geographical raster collections
 on the Hadoop File System (HDFS). The initial use case was to store and quickly
@@ -135,3 +135,36 @@ assumes that you have similar ``0_input`` and ``1_manual`` directories.
     │   ├── test2.hdf
     │   └── test.hdf
 
+
+
+Building the Cython modules
+===========================
+rastercube relies on Cython modules for some operation. Those cython modules need to be compiled. To do so, you
+can simply run the ``build.sh`` script in the root directory. There are a few gotchas though :
+
+Building with Anaconda on OSX
+-----------------------------
+If you are using OSX and use Anaconda's python, you need to make sure that cython will build with Anaconda's GCC
+and NOT clang or the system GCC. This is because Anaconda's python is linked with libstdc++ (the GCC standard library)
+and OSX ships with a pre-C++11 version of libstdc++, which might lead to problems.
+
+In short, ensure that if you run ``which gcc``, it either points to Anaconda's gcc or to a recent homebrew installed
+GCC.
+
+You can control the C/C++ compiler used by setting the `CC` and `CXX` environment variables when building
+
+::
+
+    CXX=/usr/local/bin/gcc-7 CC=$CXX ./build.sh
+
+
+Building to use through Spark on a cluster
+------------------------------------------
+When you use rastercube with a Spark cluster, Spark will distribute the python egg (the output of build.sh) to all
+Spark worker nodes. Since we use native modules, you need to ensure that the egg is built for the correct CPU
+architecture. Assuming you have a homogeneous cluster, the easiest way to do so is to build rastercube and start the
+spark job from one of the cluster node.
+
+Otherwise, if you build from a Linux machine, you need to make sure that GCC targets an architecture that is common
+to both your Linux machine and the cluster. You can play with the ``-march`` option in ``setup.py`` to target
+the correct CPU type, going all the way to ``march=i386`` which should work but could lead to lower performance.
