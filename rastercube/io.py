@@ -94,13 +94,13 @@ def fs_delete(path, hdfs_client=None, recursive=False):
         path = strip_uri_proto(path, 'fs://')
         assert len(path) > 0
         assert path != '/'
-        if recursive == False:
+        if recursive:
+            shutil.rmtree(path)
+        else:
             if os.path.isdir(path):
                 os.rmdir(path)
             else:
                 os.remove(path)
-        else:
-            shutil.rmtree(path)
 
 def fs_exists(fname, hdfs_client=None):
     """
