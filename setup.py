@@ -52,6 +52,10 @@ setup(
         'PIL',
         'nbconvert==4.2.0',
         'nbsphinx',
+        'gdal',
+        'matplotlib',
+        'beautifulsoup4',
+
     ],
     setup_requires=[
         'pytest-runner',
