@@ -8,7 +8,7 @@ on the Hadoop File System (HDFS). See the :ref:`overview` for more.
    :maxdepth: 2
    :numbered: 3
 
-   overview
+   getting_started
    examples
    scripts
    api
