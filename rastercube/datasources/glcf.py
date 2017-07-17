@@ -4,7 +4,6 @@ http://glcf.umd.edu/data/lc/
 """
 import numpy as np
 import numpy.ma as ma
-import pylab as pl
 import matplotlib.patches as mpatches
 
 CLASSES_NAMES = {
@@ -60,6 +59,7 @@ def glcf_to_rgb(arr):
 
 
 def plot_glcf_labelmap(labels, ax=None):
+    import pylab as pl
     if ax is None:
         ax = pl.subplot(111)
 
