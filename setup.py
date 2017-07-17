@@ -49,18 +49,16 @@ setup(
         'coverage',
         'beautifulsoup4',
         'joblib',
-        'PIL',
-        'nbconvert==4.2.0',
+        'pillow',
+        'nbconvert',
         'nbsphinx',
         'gdal',
         'matplotlib',
-        'beautifulsoup4',
 
     ],
     setup_requires=[
         'pytest-runner',
         'cython',
-        'flake8',
     ],
     test_requires=[
         'pytest',
