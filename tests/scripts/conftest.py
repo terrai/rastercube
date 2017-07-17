@@ -4,6 +4,7 @@ import tempfile
 import rastercube.io as io
 import tests.utils as test_utils
 
+
 @pytest.fixture()
 def tempdir(request):
     """
@@ -21,6 +22,7 @@ def tempdir(request):
     print 'Using tempdir : ', tempdir
     yield tempdir
     io.fs_delete(tempdir, recursive=True)
+
 
 @pytest.fixture()
 def setup_env():

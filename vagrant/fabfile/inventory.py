@@ -28,9 +28,9 @@ spark_master = targets[spark_master]
 print 'hadoop master : ', hadoop_master
 print 'spark master :', spark_master
 
-#env.hosts = [hadoop_master]
 env.user = 'vagrant'
 env.key_filename = os.path.join(fabdir, '../ansible/roles/common/files/ssh_key')
+
 
 def runs_on(target):
     """

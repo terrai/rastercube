@@ -70,7 +70,7 @@ def gdal_warp(src_ds, dst_wkt):
 
     Args:
         src_ds: Source dataset
-        dst_srs: Target SRS WKT
+        dst_wkt: Target SRS WKT
 
     Returns:
         dst_ds: The warped dataset

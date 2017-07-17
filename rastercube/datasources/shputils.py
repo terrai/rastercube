@@ -68,9 +68,9 @@ def polygon_to_shapefile(polygons, poly_sr, fname, fields_defs=None,
     Write a set of polygons to a shapefile
     Args:
         polygons: a list of (lat, lng) tuples
-        fields: The list of fields for those polygons, as a tuple
-                (name, ogr type) for each field. For example :
-                    [('field1', ogr.OFTReal), ('field2', ogr.OFTInteger)]
+        fields_defs: The list of fields for those polygons, as a tuple
+                     (name, ogr type) for each field. For example :
+                     [('field1', ogr.OFTReal), ('field2', ogr.OFTInteger)]
         poly_attrs: A list of dict containing the attributes for each polygon
                         [{'field1' : 1.0, 'field2': 42},
                          {'field1' : 3.0, 'field2': 60}]
@@ -116,7 +116,7 @@ def rasterize_polygon_like(polygon, poly_sr, model_raster_fname, dtype,
     """
     Like rasterize_shapefile_like, but for an in-memory polygon
     Args:
-        polygons: a list of (lat, lng) tuples
+        polygon: a list of (lat, lng) tuples
     """
     _, tmp_fname = tempfile.mkstemp(suffix='.shp')
     # mkstemp creates the file but GDAL wants to create it itself

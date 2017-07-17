@@ -15,6 +15,7 @@ import rastercube.datasources.modis as modis
 import rastercube.gdal_utils as gdal_utils
 from numpy.testing import assert_array_equal
 
+
 @pytest.mark.usefixtures("setup_env")
 def test_create_ndvi_worldgrid(tempdir):
     """
@@ -59,7 +60,7 @@ def test_create_ndvi_worldgrid(tempdir):
     # Load the HDF and the corresponding date from the jgrid and
     # check for consistency
     hdf_fname = os.path.join(utils.get_modis_hdf_dir(), '2000',
-            'MOD13Q1.A2000065.h29v07.005.2008238013448.hdf')
+                             'MOD13Q1.A2000065.h29v07.005.2008238013448.hdf')
     f = modis.ModisHDF(hdf_fname)
     ndvi_ds = f.load_gdal_dataset(modis.MODIS_NDVI_DATASET_NAME)
 
@@ -75,5 +76,5 @@ def test_create_ndvi_worldgrid(tempdir):
                 [qa_header, ndvi_header], hdf_poly)
     assert ndvi.shape[:2] == hdf_ndvi.shape
     # Verify that the jgrid ndvi and the HDF ndvi store the same values
-    assert_array_equal(hdf_ndvi, ndvi[:,:,1])
-    assert_array_equal(hdf_qa, qa[:,:,1])
+    assert_array_equal(hdf_ndvi, ndvi[:, :, 1])
+    assert_array_equal(hdf_qa, qa[:, :, 1])

@@ -17,20 +17,12 @@ Example invocation::
 """
 import os
 import sys
-import time
 import argparse
-import warnings
 import pyhdf
 import pyhdf.SD
-import ctypes
 import shutil
-import numpy as np
-import multiprocessing
-import multiprocessing.sharedctypes
 import rastercube.utils as utils
 import rastercube.datasources.modis as modis
-import rastercube.jgrid as jgrid
-import rastercube.worldgrid.grids as grids
 
 
 parser = argparse.ArgumentParser(description="Create a new NDVI worldgrid")

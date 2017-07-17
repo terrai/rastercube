@@ -76,7 +76,6 @@ def fs_read(fname, hdfs_client=None):
         with open(fname, 'rb') as f:
             blob = f.read()
             return blob
-    raise IOError("Error reading %s" % fname)
 
 
 def fs_delete(path, hdfs_client=None, recursive=False):

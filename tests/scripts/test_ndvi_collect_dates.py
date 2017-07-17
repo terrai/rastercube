@@ -18,8 +18,8 @@ def test_collect_dates():
         output = subprocess.check_output(cmd)
 
         # The saved file has one date per line
-        with open(f.name, 'r') as f:
-            dates = [d.strip() for d in f.read().split('\n')]
+        with open(f.name, 'r') as ff:
+            dates = [d.strip() for d in ff.read().split('\n')]
             dates = filter(lambda v: len(v) > 0, dates)
         assert dates == ['2000_02_18', '2000_03_05', '2000_03_21', '2004_12_26']
 

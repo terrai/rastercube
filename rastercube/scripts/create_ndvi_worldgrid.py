@@ -20,7 +20,6 @@ import argparse
 import warnings
 import ctypes
 import numpy as np
-import multiprocessing
 import multiprocessing.sharedctypes
 import rastercube.utils as utils
 import rastercube.datasources.modis as modis
@@ -78,7 +77,7 @@ def _mp_init(shared_ndvi, shared_qa):
 # ------------------------------------- Multiprocess HDF processing
 
 def _real_mp_process_hdf(hdf_file, t, grid_w, grid_h, ndates):
-    #ignore the PEP 3118 buffer warning
+    # ignore the PEP 3118 buffer warning
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
         s_ndvi = np.ctypeslib.as_array(_mp_ndvi)
@@ -94,7 +93,6 @@ def _real_mp_process_hdf(hdf_file, t, grid_w, grid_h, ndates):
     # -- ndvi
     _ndvi_start = time.time()
     ds = modhdf.load_gdal_dataset(modis.MODIS_NDVI_DATASET_NAME)
-    #s_ndvi[:, :, t] = ds.ReadAsArray()
     ds.ReadAsArray(buf_obj=s_ndvi[:, :, t])
     _ndvi_elapsed = time.time() - _ndvi_start
     del ds
@@ -102,7 +100,6 @@ def _real_mp_process_hdf(hdf_file, t, grid_w, grid_h, ndates):
     # -- qa
     _qa_start = time.time()
     ds = modhdf.load_gdal_dataset(modis.MODIS_QA_DATASET_NAME)
-    #s_qa[:, :, t] = ds.ReadAsArray()
     ds.ReadAsArray(buf_obj=s_qa[:, :, t])
     _qa_elapsed = time.time() - _qa_start
     del ds
@@ -128,7 +125,7 @@ def _mp_process_hdf(args):
 # ------------------------------------- Multiprocess fractions writing
 
 def _real_mp_write_frac(frac_num, grid_w, grid_h, ndates):
-    #ignore the PEP 3118 buffer warning
+    # ignore the PEP 3118 buffer warning
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
         s_ndvi = np.ctypeslib.as_array(_mp_ndvi)
@@ -326,9 +323,6 @@ if __name__ == '__main__':
         pool.terminate()
         pool.join()
         sys.exit(-1)
-
-    #assert all(results), "Some failed fractions : %s" \
-        #% str(np.flatnonzero(results))
 
     print 'Workers finished in %f [s], writing fractions' % (
         time.time() - _hdf_start)

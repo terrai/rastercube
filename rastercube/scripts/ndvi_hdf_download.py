@@ -25,7 +25,6 @@ Example invocation::
 
 """
 import os
-import sys
 import argparse
 from datetime import datetime
 import calendar
@@ -34,8 +33,6 @@ import rastercube.config as config
 import rastercube.datasources.modis as modis
 import urlparse
 import cPickle as pickle
-import tempfile
-import shutil
 import time
 import re
 import requests
@@ -102,10 +99,10 @@ def parse_available_hdf_for_date(dateurl, contents):
 
     # BeautifulSoup fails to find some <a> (probably because of messy
     # encoding). So fallback on regexp
-    #soup = BeautifulSoup(contents, 'lxml')
-    #print contents
-    #print len(soup.find_all('a')), ' links found'
-    #all_files = [l.get('href').strip() for l in soup.find_all('a')]
+    # soup = BeautifulSoup(contents, 'lxml')
+    # print contents
+    # print len(soup.find_all('a')), ' links found'
+    # all_files = [l.get('href').strip() for l in soup.find_all('a')]
 
     LINK_REGEXP = r'\<a\s+href="(?P<href>[\w\.]+)"\>'
     a_regexp = re.compile(LINK_REGEXP)
@@ -332,10 +329,10 @@ if __name__ == '__main__':
     if not os.path.exists(MODIS_HDF_CACHE):
         print 'Building MODIS HDF cache'
         all_hdf_files = {
-            'terra' : collect_available_hdf_from_mirror(
+            'terra': collect_available_hdf_from_mirror(
                 terra_mirror_dir, config.MODIS_TERRA_URL
             ),
-            'aqua' : collect_available_hdf_from_mirror(
+            'aqua': collect_available_hdf_from_mirror(
                 aqua_mirror_dir, config.MODIS_AQUA_URL
             ),
         }
@@ -379,7 +376,7 @@ if __name__ == '__main__':
     # Download the files
     if args.force_wget:
         assert False, "wget support is not yet working because of authentication"
-        download_files_wget(missing_files)
+        # download_files_wget(missing_files)
     else:
         download_files_aria2(missing_files)
 

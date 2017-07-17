@@ -7,10 +7,8 @@ import calendar
 import gdal
 import collections
 import numpy as np
-from osgeo import osr
 from datetime import datetime
 import rastercube.datasources.modis_qa as modis_qa
-import rastercube.utils as utils
 
 
 # Lowercase regexp to match MODIS filenames
@@ -33,7 +31,7 @@ def ndvi_hdf_for_tile(tile_name, hdf_dir, satellite=None):
     """
     List the available NDVI HDF files for the given tilename
     Args:
-        tilename: the tile name (e.g. h17v07)
+        tile_name: the tile name (e.g. h17v07)
         hdf_dir: directory containing one subdirectory per year which contains
                  HDF files
     Returns:
@@ -210,6 +208,7 @@ MODIS_QA_DATASET_NAME = '250m 16 days VI Quality'
 MODIS_NDVI_NODATA = -3000
 MODIS_QA_NODATA = 65535
 
+
 class ModisHDF(object):
     """
     Modis HDF files are basically archive files that contain multiple datasets.
@@ -228,10 +227,6 @@ class ModisHDF(object):
                 ds = gdal.Open(url)
                 return ds
         return None
-
-    def get_tile_reprojector(self):
-        ndvi_ds = self.load_gdal_dataset(MODIS_NDVI_DATASET_NAME)
-        return TileReprojector.from_model_tile(ndvi_ds)
 
     def reproject_ndvi_qa(self, reprojector):
         """

@@ -2,7 +2,6 @@
 Utilities to simplify running rastercube on hadoop
 """
 from hdfs import InsecureClient
-import urlparse
 import rastercube.config as config
 
 

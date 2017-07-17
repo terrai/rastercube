@@ -10,7 +10,6 @@ Example invocation::
         --outfile=$RASTERCUBE_DATA/1_manual/ndvi_dates.csv
 
 """
-import os
 import argparse
 import numpy as np
 import rastercube.utils as utils

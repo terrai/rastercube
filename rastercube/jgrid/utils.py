@@ -2,12 +2,10 @@
 Utility functions related to jGrid2
 """
 import gdal
-import time
 import numpy as np
 import numpy.ma as ma
 import rastercube.imutils as imutils
 import rastercube.gdal_utils as gdal_utils
-from osgeo import osr, ogr
 
 
 def fracs_for_poly_bbox_xy(header, polygon_xy):
@@ -223,6 +221,8 @@ def slice_and_reproject_to_grid(header, xy_from, grid_shape, src_ds,
         gdal_mode = gdal.GRA_Mode
     elif interpolation == 'average':
         gdal_mode = gdal.GRA_Average
+    else:
+        raise ValueError("Invalid interpolation mode %s" % interpolation)
 
     res = gdal.ReprojectImage(
         src_ds,

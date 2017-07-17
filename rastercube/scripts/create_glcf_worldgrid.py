@@ -16,9 +16,7 @@ import shutil
 import argparse
 import tempfile
 import numpy as np
-import multiprocessing
 import rastercube.utils as utils
-import rastercube.datasources.modis as modis
 import rastercube.jgrid as jgrid
 import rastercube.worldgrid.grids as grids
 from osgeo import gdal

@@ -58,9 +58,9 @@ def test_complete_ndvi_worldgrid(tempdir):
     All 5 grids should contain the exact same data
     """
     create_script = os.path.join(test_utils.get_rastercube_dir(),
-            'scripts', 'create_ndvi_worldgrid.py')
+                                 'scripts', 'create_ndvi_worldgrid.py')
     complete_script = os.path.join(test_utils.get_rastercube_dir(),
-            'scripts', 'complete_ndvi_worldgrid.py')
+                                   'scripts', 'complete_ndvi_worldgrid.py')
 
     dates_csv = os.path.join(utils.get_data_dir(), '1_manual',
                              'ndvi_dates.csv')

@@ -19,8 +19,6 @@ import time
 import argparse
 import numpy as np
 import rastercube.jgrid as jgrid
-import rastercube.worldgrid.grids as grids
-import rastercube.io as io
 import joblib
 
 parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
@@ -120,5 +118,3 @@ if __name__ == '__main__':
             truncate_frac(fraction, ndvi_root, qa_root)
         else:
             print 'Fraction', fraction, 'is not available in HDFS'
-    
-    

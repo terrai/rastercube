@@ -1,17 +1,20 @@
 from fabric.api import *
 from inventory import runs_on
 
+
 @task
 @runs_on('hadoop_master')
 def start():
     with cd('$HADOOP_HOME'):
         run('sbin/start-dfs.sh')
 
+
 @task
 @runs_on('hadoop_master')
 def stop():
     with cd('$HADOOP_HOME'):
         run('sbin/stop-dfs.sh')
+
 
 @task
 @runs_on('hadoop_master')
@@ -23,6 +26,7 @@ def format_namenode():
 
     with cd('$HADOOP_HOME'):
         run('bin/hdfs namenode -format -nonInteractive -clusterId hdfs-terrai-cluster')
+
 
 @task
 @runs_on('hadoop_master')

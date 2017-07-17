@@ -1,7 +1,6 @@
 import os
 import rastercube
 import functools
-import tempfile
 import urlparse
 import rastercube.config as config
 import rastercube.jgrid.jgrid3 as jgrid3

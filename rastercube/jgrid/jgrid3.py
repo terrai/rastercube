@@ -40,10 +40,7 @@ import re
 import numpy as np
 import json
 import copy
-import struct
-import gzip
 import cStringIO as StringIO
-import rastercube.hadoop.common as terrahdfs
 import rastercube.utils as utils
 import pyprind
 from osgeo import osr
@@ -437,8 +434,8 @@ class Header(object):
         assert np.dtype(data.dtype) == self.dtype
         # Protect against fraction bigger than frac_ndates
         assert data.shape[2] <= self.frac_ndates, \
-            'Corrupted fraction %d, shape[2] is %d, header frac_ndates=%d' % (
-                frac_num, data.shape[2], self.frac_ndates)
+            'Corrupted fraction %s, shape[2] is %d, header frac_ndates=%d' % (
+                str(frac_id), data.shape[2], self.frac_ndates)
         write_frac(self.frac_fname(frac_id), data, hdfs_client)
 
     def write_all(self, data):

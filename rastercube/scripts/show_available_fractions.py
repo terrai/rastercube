@@ -11,16 +11,12 @@ from __future__ import division
 
 import os
 import sys
-import time
 import argparse
 import numpy as np
 import rastercube.utils as utils
 import rastercube.datasources.modis as modis
 import rastercube.jgrid as jgrid
 import rastercube.worldgrid.grids as grids
-import joblib
-
-import pdb
 
 parser = argparse.ArgumentParser(description='Create NDVI/QA jgrids from HDF')
 
@@ -61,7 +57,7 @@ if __name__ == '__main__':
         print 'Finding files...',
         sys.stdout.flush()
         hdf_files = modis.ndvi_hdf_for_tile(tilename, modis_dir)
-        hdf_files = {ts:fname for (fname, ts) in hdf_files}
+        hdf_files = {ts: fname for (fname, ts) in hdf_files}
 
         # -- Figure out the fractions we have to update
         modgrid = grids.MODISGrid()
@@ -70,7 +66,7 @@ if __name__ == '__main__':
         print 'Finding fractions...',
         sys.stdout.flush()
         fractions = modgrid.get_cells_for_tile(tile_h, tile_v)
-        assert np.all(ndvi_header.list_available_fracnums() == \
+        assert np.all(ndvi_header.list_available_fracnums() ==
                       qa_header.list_available_fracnums())
         fractions = np.intersect1d(fractions,
                                    ndvi_header.list_available_fracnums())

@@ -5,7 +5,6 @@ import rastercube.gdal_utils as gdal_utils
 from numpy.testing import assert_allclose
 
 
-
 class GdalDsFromArrayTest(unittest.TestCase):
     def test_2d(self):
         arr = np.random.rand(15, 17)

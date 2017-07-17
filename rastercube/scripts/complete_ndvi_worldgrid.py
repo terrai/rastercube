@@ -60,9 +60,6 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
     """
     Given a frac_num, will make sure it contains data for all dates in
     ndvi_header.timestamps_ms
-
-    Args:
-        hdf_files: A dict mapping timestamp to HDF filename
     """
     _start = time.time()
     modgrid = grids.MODISGrid()
@@ -76,6 +73,8 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
     d_from = 0
     d_to = ndvi_header.shape[2] // ndvi_header.frac_ndates + 1
 
+    frac_id = None
+    frac_d = None
     # Find the most recent existing fraction and the most recent timestamp
     for frac_d in range(d_from, d_to)[::-1]:
         frac_id = (frac_num, frac_d)
@@ -83,11 +82,14 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
         if io.fs_exists(fname):
             break
 
+    assert frac_id is not None
+    assert frac_d is not None
+
     # Read the data of the most recent fraction in HDFS
     ndvi = jgrid.read_frac(ndvi_header.frac_fname(frac_id))
     qa = jgrid.read_frac(qa_header.frac_fname(frac_id))
 
-    assert np.all(ndvi.shape == qa.shape)
+    assert ndvi.shape == qa.shape
 
     # Compute the index of the last date in HDFS
     most_recent_t = frac_d * ndvi_header.frac_ndates + ndvi.shape[2]
@@ -108,7 +110,7 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
             qa_header.write_frac(frac_id, qa)
             # Prepare variables for a new fraction
             frac_d += 1
-            ndvi = new_ndvi[: , :, None]
+            ndvi = new_ndvi[:, :, None]
             qa = new_qa[:, :, None]
         else:
             # TODO: If we end up completing multiple dates, we could preallocate
@@ -117,16 +119,17 @@ def complete_frac(frac_num, ndvi_root, qa_root, frac_tilename, tilename_fileinde
             ndvi = np.concatenate([ndvi, new_ndvi[:, :, None]], axis=2)
             qa = np.concatenate([qa, new_qa[:, :, None]], axis=2)
 
-        assert np.all(ndvi.shape == qa.shape)
+        assert ndvi.shape == qa.shape
 
     # Write last incomplete fraction
     frac_id = (frac_num, frac_d)
     ndvi_header.write_frac(frac_id, ndvi)
     qa_header.write_frac(frac_id, qa)
 
-    print 'Processed %d, appended %d dates, took %.02f [s]' % (frac_num,
-           len(ndvi_header.timestamps_ms) - most_recent_t,
-           time.time() - _start)
+    print 'Processed %d, appended %d dates, took %.02f [s]' % (
+        frac_num, len(ndvi_header.timestamps_ms) - most_recent_t,
+        time.time() - _start
+    )
 
     sys.stdout.flush()
 
@@ -183,7 +186,6 @@ if __name__ == '__main__':
     assert np.all(ndvi_header.list_available_fracnums() ==
                   qa_header.list_available_fracnums())
 
-
     if tilename == 'all':
         print 'All fractions selected'
         fractions = ndvi_header.list_available_fracnums()
@@ -231,7 +233,7 @@ if __name__ == '__main__':
     tilename_fileindex = {}
     for t_n in tiles:
         hdf_f = modis.ndvi_hdf_for_tile(t_n, modis_dir)
-        hdf_f = {ts:fname for (fname, ts) in hdf_f}
+        hdf_f = {ts: fname for (fname, ts) in hdf_f}
         tilename_fileindex[t_n] = hdf_f
 
     # Launch the process

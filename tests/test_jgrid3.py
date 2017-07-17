@@ -54,10 +54,7 @@ class HeaderTests(unittest.TestCase):
             shape=[height, width, len(timestamps)],
             frac_width=200, frac_height=200, sr_wkt=MODIS_SIN_WKT,
             dtype=np.float32, geot=geot, timestamps_ms=timestamps)
-        #print header.xy2latlng((0, 0))
-        #print header.xy2latlng((header.width, 0))
-        #print header.xy2latlng((0, header.height))
-        #print header.xy2latlng((header.width, header.height))
+
         min_lat, min_lng = header.xy2latlng((0, header.height))
         max_lat, max_lng = header.xy2latlng((header.width, 0))
         for i in xrange(10):
@@ -82,7 +79,7 @@ class HeaderTests(unittest.TestCase):
         width = 200
         height = 180
         timestamps = [1, 2]
-        meta = {'meta1' : 'foobar'}
+        meta = {'meta1': 'foobar'}
         header = jgrid3.Header(
             self.grid_root, width=width, height=height,
             shape=[height, width, len(timestamps)],
@@ -166,7 +163,6 @@ class HeaderTests(unittest.TestCase):
         assert data.dtype == data2.dtype
         assert np.allclose(data, data2, atol=1e-3)
 
-
     def test_frac_for_xy(self):
         header = self._create_test_grid_header1()
         frac_num = header.frac_for_xy(0, 0)
@@ -181,26 +177,26 @@ class HeaderTests(unittest.TestCase):
     def test_frac_for_rect(self):
         header = self._create_test_grid_header1()
         fracs = header.fracs_for_rect_xy((50, 60), (149, 119))
-        assert set(fracs) == set([5, 6])
+        assert set(fracs) == {5, 6}
 
         # The end is exclusive, so this is the same as previous
         fracs = header.fracs_for_rect_xy((50, 60), (150, 120))
-        assert set(fracs) == set([5, 6])
+        assert set(fracs) == {5, 6}
 
         fracs = header.fracs_for_rect_xy((50, 60), (151, 120))
-        assert set(fracs) == set([5, 6, 7])
+        assert set(fracs) == {5, 6, 7}
 
         fracs = header.fracs_for_rect_xy((50, 60), (190, 120))
-        assert set(fracs) == set([5, 6, 7])
+        assert set(fracs) == {5, 6, 7}
 
         fracs = header.fracs_for_rect_xy((50, 60), (150, 130))
-        assert set(fracs) == set([5, 6, 9, 10])
+        assert set(fracs) == {5, 6, 9, 10}
 
         fracs = header.fracs_for_rect_xy((49, 60), (149, 119))
-        assert set(fracs) == set([4, 5, 6])
+        assert set(fracs) == {4, 5, 6}
 
         fracs = header.fracs_for_rect_xy((150, 120), (189, 129))
-        assert set(fracs) == set([11])
+        assert set(fracs) == {11}
 
     def test_load_slice(self):
         """Test reading a slice of a grid"""
@@ -265,7 +261,6 @@ class HeaderTests(unittest.TestCase):
         _do_xy((49, 60), (149, 119), 5, 11)
         _do_xy((49, 60), (150, 120), 0, 11)
         _do_xy((150, 120), (189, 129), 3, 4)
-
 
     def test_load_slice_latlng(self):
         frac_width = 19

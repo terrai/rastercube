@@ -2,7 +2,6 @@
 This defines world grids that are used to index jGridFrac
 """
 import numpy as np
-from osgeo import osr
 
 
 class GLCFGrid(object):
