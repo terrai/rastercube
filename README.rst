@@ -5,6 +5,10 @@ rastercube
    :target: http://rastercube.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://img.shields.io/travis/terrai/rastercube.svg?style=flat-square
+   :target: https://travis-ci.org/terrai/rastercube/
+   :alt: Build status
+
 .. image:: https://img.shields.io/badge/License-MIT-blue.svg
    :target: https://github.com/terrai/rastercube/blob/master/LICENSE
    :alt: MIT License
