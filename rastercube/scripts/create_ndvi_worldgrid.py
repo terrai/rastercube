@@ -37,18 +37,15 @@ parser.add_argument('--modis_dir', type=str, required=False,
                     help='directory where input MODIS files are stored')
 parser.add_argument('--worldgrid', type=str, required=True,
                     help='worldgrid root')
-# If we have fractions of 400x400x200 and store int16, we get
-# 400 * 400 * 200 * 2 / (1024 * 1024.) = 61MB
-parser.add_argument('--frac_ndates', type=int, default=200,
+# If we have fractions of 400x400x50 and store int16, we get
+# 400 * 400 * 50 * 2 / (1024 * 1024.) = 15MB
+parser.add_argument('--frac_ndates', type=int, default=50,
                     help='Size of a chunk along the time axis')
 parser.add_argument('--nworkers', type=int, default=5,
                     help='Number of workers (if using multiprocessing)')
 parser.add_argument('--dates_csv', type=str, default=None,
                     help='The dates that must be included in the grid'
                          'see scripts/ndvi_collect_dates.py')
-parser.add_argument('--force_all', action='store_true',
-                    help='If True, will recreate all fractions')
-
 parser.add_argument('--test_limit_fractions', type=int, default=None,
                     help='(TESTING ONLY) : Only create the first n fractions')
 
@@ -76,15 +73,19 @@ def _mp_init(shared_ndvi, shared_qa):
 
 # ------------------------------------- Multiprocess HDF processing
 
-def _real_mp_process_hdf(hdf_file, t, grid_w, grid_h, ndates):
+def _real_mp_process_hdf(hdf_file, frac_ti, grid_w, grid_h, frac_ndates):
+    """
+    Args:
+        frac_ti: The time index of the hdf_file in the current frac array
+    """
     # ignore the PEP 3118 buffer warning
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
         s_ndvi = np.ctypeslib.as_array(_mp_ndvi)
-        s_ndvi.shape = (grid_h, grid_w, ndates)
+        s_ndvi.shape = (grid_h, grid_w, frac_ndates)
         s_ndvi.dtype = np.int16
         s_qa = np.ctypeslib.as_array(_mp_qa)
-        s_qa.shape = (grid_h, grid_w, ndates)
+        s_qa.shape = (grid_h, grid_w, frac_ndates)
         s_qa.dtype = np.uint16
 
     _start = time.time()
@@ -93,18 +94,19 @@ def _real_mp_process_hdf(hdf_file, t, grid_w, grid_h, ndates):
     # -- ndvi
     _ndvi_start = time.time()
     ds = modhdf.load_gdal_dataset(modis.MODIS_NDVI_DATASET_NAME)
-    ds.ReadAsArray(buf_obj=s_ndvi[:, :, t])
+    ds.ReadAsArray(buf_obj=s_ndvi[:, :, frac_ti])
     _ndvi_elapsed = time.time() - _ndvi_start
     del ds
 
     # -- qa
     _qa_start = time.time()
     ds = modhdf.load_gdal_dataset(modis.MODIS_QA_DATASET_NAME)
-    ds.ReadAsArray(buf_obj=s_qa[:, :, t])
+    ds.ReadAsArray(buf_obj=s_qa[:, :, frac_ti])
     _qa_elapsed = time.time() - _qa_start
     del ds
 
-    print 'Loading ', hdf_file, 'took %.02f [s] (%.02f ndvi read, %.02f qa)' % (
+    print 'Loading ', os.path.basename(hdf_file),\
+        'took %.02f [s] (%.02f ndvi read, %.02f qa)' % (
         time.time() - _start, _ndvi_elapsed, _qa_elapsed)
     sys.stdout.flush()
 
@@ -124,37 +126,26 @@ def _mp_process_hdf(args):
 
 # ------------------------------------- Multiprocess fractions writing
 
-def _real_mp_write_frac(frac_num, grid_w, grid_h, ndates):
+def _real_mp_write_frac(frac_id, grid_w, grid_h, frac_ndates):
     # ignore the PEP 3118 buffer warning
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
         s_ndvi = np.ctypeslib.as_array(_mp_ndvi)
-        s_ndvi.shape = (grid_h, grid_w, ndates)
+        s_ndvi.shape = (grid_h, grid_w, frac_ndates)
         s_ndvi.dtype = np.int16
         s_qa = np.ctypeslib.as_array(_mp_qa)
-        s_qa.shape = (grid_h, grid_w, ndates)
+        s_qa.shape = (grid_h, grid_w, frac_ndates)
         s_qa.dtype = np.uint16
 
-    _start = time.time()
+    frac_num, frac_d = frac_id
 
     i_range, j_range = modgrid.get_cell_indices_in_tile(
         frac_num, tile_h, tile_v)
-    for frac_d in xrange(ndvi_header.num_dates_fracs):
-        t1, t2 = ndvi_header.frac_time_range(frac_d)
-        frac_id = (frac_num, frac_d)
-        frac_ndvi = s_ndvi[
-            i_range[0]:i_range[1],
-            j_range[0]:j_range[1],
-            t1:t2]
-        frac_qa = s_qa[
-            i_range[0]:i_range[1],
-            j_range[0]:j_range[1],
-            t1:t2]
-        ndvi_header.write_frac(frac_id, frac_ndvi)
-        qa_header.write_frac(frac_id, frac_qa)
+    frac_ndvi = s_ndvi[i_range[0]:i_range[1], j_range[0]:j_range[1], :]
+    frac_qa = s_qa[i_range[0]:i_range[1], j_range[0]:j_range[1], :]
 
-    print 'Wrote %d, took %.02f [s]' % (frac_num, time.time() - _start)
-    sys.stdout.flush()
+    ndvi_header.write_frac(frac_id, frac_ndvi)
+    qa_header.write_frac(frac_id, frac_qa)
 
 
 def _mp_write_frac(args):
@@ -238,6 +229,9 @@ if __name__ == '__main__':
             dates = np.genfromtxt(args.dates_csv, dtype=str)
             dates_ms = sorted([utils.parse_date(d) for d in dates])
             assert np.all(ndvi_header.timestamps_ms == dates_ms)
+    assert args.frac_ndates == ndvi_header.frac_ndates,\
+        "Existing header has different frac_ndates (%d) than requested (%d)" % \
+        (ndvi_header.frac_ndates, args.frac_ndates)
 
     hdf_files = collect_hdf_files(tilename, modis_dir)
 
@@ -255,9 +249,16 @@ if __name__ == '__main__':
     modgrid = grids.MODISGrid()
     tile_h, tile_v = modis.parse_tilename(tilename)
     fractions = modgrid.get_cells_for_tile(tile_h, tile_v)
-    if not args.force_all:
-        fractions = np.setdiff1d(fractions,
-                                 ndvi_header.list_available_fractions())
+    if test_limit_fractions is not None:
+        # This should only be used for testing as a mean to speed things
+        # up by only creating a limited number of fractions
+        print 'TEST - Limiting fractions'
+        fractions = fractions[:test_limit_fractions]
+
+    grid_w = modgrid.MODIS_tile_width
+    grid_h = modgrid.MODIS_tile_height
+
+    max_frac_size_mb = (grid_w * grid_h * ndvi_header.frac_ndates * 2 / (1024. * 1024.))
 
     print
     print 'Will import the following :'
@@ -270,6 +271,7 @@ if __name__ == '__main__':
     print 'date range : %s' % (utils.format_date(hdf_files[0][1]) + ' - ' +
                                utils.format_date(hdf_files[-1][1]))
     print 'num source hdf files : %d' % len(hdf_files)
+    print 'required memory : %d [Mb]' % max_frac_size_mb
     print
 
     if len(fractions) == 0:
@@ -282,88 +284,54 @@ if __name__ == '__main__':
 
     _start = time.time()
 
-    # -- Allocate NDVI and QA arrays that will be filled by workers
-    grid_w = modgrid.MODIS_tile_width
-    grid_h = modgrid.MODIS_tile_height
-    ndates = len(hdf_files)
-    print 'Allocating memory for NDVI and QA arrays'
+    assert ndvi_header.frac_ndates == qa_header.frac_ndates
 
-    # We directly use short for data and let the workers do the conversion
-    shared_ndvi = multiprocessing.sharedctypes.RawArray(
-        ctypes.c_short, grid_w * grid_h * ndates)
-    shared_qa = multiprocessing.sharedctypes.RawArray(
-        ctypes.c_short, grid_w * grid_h * ndates)
+    for frac_d in xrange(ndvi_header.num_dates_fracs):
 
-    print 'Finished allocation'
-    sys.stdout.flush()
+        frac_time_range = np.arange(*ndvi_header.frac_time_range(frac_d))
+        frac_ndates = len(frac_time_range)
 
-    # -- Start all the workers who will fill the array
-    pool = multiprocessing.Pool(
-        processes=nworkers,
-        initializer=_mp_init,
-        initargs=(shared_ndvi, shared_qa)
-    )
-    _hdf_start = time.time()
-    print 'Starting %d workers' % nworkers
-    sys.stdout.flush()
-    try:
-        args = []
-        for t, (fname, timestamp) in enumerate(hdf_files):
-            args.append((fname, t, grid_w, grid_h, ndates))
+        # We directly use short for data and let the workers do the conversion
+        shared_ndvi = multiprocessing.sharedctypes.RawArray(
+            ctypes.c_short, grid_w * grid_h * frac_ndates)
+        shared_qa = multiprocessing.sharedctypes.RawArray(
+            ctypes.c_short, grid_w * grid_h * frac_ndates)
 
-        # The .get(9999999) are a ugly fix for a python bug where the keyboard
-        # interrupt isn't raised depending on when it happens
-        # see
-        # http://stackoverflow.com/a/1408476
-        results = pool.map_async(_mp_process_hdf, args).get(9999999)
-        pool.close()
-        pool.join()
-    except KeyboardInterrupt:
-        print "Caught KeyboardInterrupt, terminating workers"
-        pool.terminate()
-        pool.join()
-        sys.exit(-1)
+        pool = multiprocessing.Pool(
+            processes=nworkers,
+            initializer=_mp_init,
+            initargs=(shared_ndvi, shared_qa)
+        )
+        try:
+            # The .get(9999999) are a ugly fix for a python bug where the keyboard
+            # interrupt isn't raised depending on when it happens
+            # see
+            # http://stackoverflow.com/a/1408476
 
-    print 'Workers finished in %f [s], writing fractions' % (
-        time.time() - _hdf_start)
-    sys.stdout.flush()
+            # 1. Read data
+            _read_start = time.time()
+            args = []
+            for frac_ti, t in enumerate(frac_time_range):
+                fname, timestamp = hdf_files[t]
+                args.append((fname, frac_ti, grid_w, grid_h, frac_ndates))
+            pool.map_async(_mp_process_hdf, args).get(9999999)
+            print 'Read took %f [s]' % (time.time() - _read_start)
 
-    # -- Write results
-    _write_start = time.time()
-    pool = multiprocessing.Pool(
-        processes=nworkers,
-        initializer=_mp_init,
-        initargs=(shared_ndvi, shared_qa)
-    )
-    _hdf_start = time.time()
-    print 'Starting %d workers' % nworkers
-    sys.stdout.flush()
-    try:
-        fractions = modgrid.get_cells_for_tile(tile_h, tile_v)
+            # 2. Write fractions
+            _write_start = time.time()
+            args = []
+            for frac_num in fractions:
+                frac_id = (frac_num, frac_d)
+                args.append((frac_id, grid_w, grid_h, frac_ndates))
+            pool.map_async(_mp_write_frac, args).get(9999999)
+            print 'Write took %f [s]' % (time.time() - _write_start)
 
-        if test_limit_fractions is not None:
-            # This should only be used for testing as a mean to speed things
-            # up by only creating a limited number of fractions
-            print 'TEST - Limiting fractions'
-            fractions = fractions[:test_limit_fractions]
-
-        args = []
-        for frac_num in fractions:
-            args.append((frac_num, grid_w, grid_h, ndates))
-
-        # The .get(9999999) are a ugly fix for a python bug where the keyboard
-        # interrupt isn't raised depending on when it happens
-        # see
-        # http://stackoverflow.com/a/1408476
-        results = pool.map_async(_mp_write_frac, args).get(9999999)
-        pool.close()
-        pool.join()
-    except KeyboardInterrupt:
-        print "Caught KeyboardInterrupt, terminating workers"
-        pool.terminate()
-        pool.join()
-        sys.exit(-1)
-
-    print 'Write took %f [s]' % (time.time() - _write_start)
+            pool.close()
+            pool.join()
+        except KeyboardInterrupt:
+            print "Caught KeyboardInterrupt, terminating workers"
+            pool.terminate()
+            pool.join()
+            sys.exit(-1)
 
     print 'Took %f [s]' % (time.time() - _start)
